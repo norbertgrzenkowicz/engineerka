@@ -1,6 +1,10 @@
 # engineerka
 Graduation project hopefully around ML, CV
 
+20.10.2021
+Project Idea most likely figured out. It's going to be a drone with CV, mobile app steering.
+Idea co-funded with two others co-founders, will add them to project in near future
+
 
 17.10.2021.
 1. Start CHECK
