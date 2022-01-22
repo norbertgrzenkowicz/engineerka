@@ -1,16 +1,30 @@
-# This is a sample Python script.
+import sys  
+import cv2 as cv
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+print(cv.__version__)
+print(sys.version)
 
+cap = cv.VideoCapture(0)
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+if not cap.isOpened():
+    print("Cannot open camera")
+    exit()
+while True:
+    # capture frame-by-frame
+    ret, frame = cap.read()        
+    #if frame is read correctly ret is True
+    if not ret:
+        print("Cant receive frame (stream end?). Exiting..")
+        break
+    #our operations on the frame come here
+    gray = cv. cvtColor(frame, cv.COLOR_BGR2GRAY)
+    blur = cv.GaussianBlur(gray, (3,3), 0)
+    edges = cv.Canny(image=blur, threshold1=50, threshold2=100) # Canny Edge Detection
 
+    #display the resulting frame
+    cv.imshow('Canny Edge Detection', edges)
+    if cv.waitKey(1) == ord('q'):
+        break
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+cap.release()
+cv.destroyAllWindows()
