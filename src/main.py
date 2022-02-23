@@ -4,7 +4,8 @@ import cv2 as cv
 print(cv.__version__)
 print(sys.version)
 
-cap = cv.VideoCapture(0)
+#cap = cv.VideoCapture(0)
+cap = cv.VideoCapture('videos/supermoto_evening.mp4')
 
 if not cap.isOpened():
     print("Cannot open camera")

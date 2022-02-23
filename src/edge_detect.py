@@ -1,7 +1,7 @@
 import cv2
 
 # Read the original image
-img = cv2.imread("C:/users/Sk4re/engineerka/images/angryman.jpg") 
+img = cv2.imread("C:/users/Sk4re/engineerka/images/curve.png") 
 # Display original image
 cv2.imshow('Original', img)
 cv2.waitKey(0)
@@ -24,7 +24,7 @@ cv2.imshow('Sobel X Y using Sobel() function', sobelxy)
 cv2.waitKey(0)
 
 # Canny Edge Detection
-edges = cv2.Canny(image=img_blur, threshold1=100, threshold2=200) # Canny Edge Detection
+edges = cv2.Canny(image=img_blur, threshold1=150, threshold2=200) # Canny Edge Detection t1 = 100 t2 = 200 the beginning
 # Display Canny Edge Detection Image
 cv2.imshow('Canny Edge Detection', edges)
 cv2.waitKey(0)
