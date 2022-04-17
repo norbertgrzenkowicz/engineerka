@@ -15,9 +15,10 @@ except OSError:
 
 #base cap
 cap = cv.VideoCapture(0)
+cap = cv.VideoCapture('videos/supermoto_evening.mp4')
+
 
 def streamed_video():
-    cap = cv.VideoCapture(0)
 
     if not cap.isOpened():
         
@@ -29,8 +30,8 @@ def streamed_video():
         # capture frame-by-frame
         ret, frame = cap.read()        
         
-        #if frame is read correctly ret is True
         if not ret:
+        #if frame is read correctly ret is True
             print("Cant receive frame (stream end?). Exiting..")
             break
         
@@ -43,7 +44,6 @@ def streamed_video():
             break
 
 def captured_video_save_data():
-    cap = cv.VideoCapture('videos/supermoto_evening.mp4')
     frame_per_second = cap.get(cv.CAP_PROP_FPS)
 
     current_frame = 0
@@ -77,8 +77,6 @@ def captured_video_save_data():
             break
 
 def captured_just_canny():
-    cap = cv.VideoCapture('videos/supermoto_evening.mp4')
-
     if not cap.isOpened():
         print("Cannot open camera")
         exit()
