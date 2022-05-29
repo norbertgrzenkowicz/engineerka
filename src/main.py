@@ -36,7 +36,7 @@ def streamed_video():
             break
         
         #our operations on the frame come here
-        gray = cv. cvtColor(frame, cv.COLOR_BGR2GRAY)
+        gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
         
         #display the resulting frame
         cv.imshow('frame', gray)

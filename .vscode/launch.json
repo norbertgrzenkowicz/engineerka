@@ -5,6 +5,10 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "editor.bracketPairColorization.enabled": true,
+            "editor.guides.bracketPairs":"active"
+        },
+        {
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",
