@@ -1,24 +1,11 @@
 # engineerka
-Graduation project hopefully around ML, CV
+Graduation project
 
-24.01.2022
-Project has been changed. It's going to be an accessory for bikers to judge their current speed based on experience based on. Project hopefully will be limited to camera, Raspberry Pi with Tensorflow Lite and LED light.
+An accessory for bikers to judge their current speed based on experience based on. Project will be limited to camera, Raspberry Pi, LED light and software development.
 
-TODO:
-OpenCV interface to gather and pre-process data
-Tensorflow Lite
-Raspberry PI
-
-20.10.2021
-Project Idea most likely figured out. It's going to be a drone with CV, mobile app steering.
-Idea co-funded with two others co-founders, will add them to project in near future
-
-
-17.10.2021.
-1. Start CHECK
-2. venv and OpenCV installation CHECK
-3. Tensorflow, numpy, pandas, jupyter and so on HALF-CHECK
-4. Set it up CHECK
-5. ??? CHECK
-6. Profit 
-
+Roadmap:
+1. Image pre-processing with opencv-python
+2. First version of ML model in tensorflow-lite
+3. Gather data.
+4. Hardware setup with cam, raspberry pi and led light.
+5. Further development.
