@@ -4,7 +4,7 @@ import os
 import numpy as np
 
 print(cv.__version__)
-print(sys.version)
+# print(sys.version)
 
 try:
     if not os.path.exists('data'):
@@ -14,9 +14,12 @@ except OSError:
     print('Error: Creating directory of data')
 
 #base cap
-cap = cv.VideoCapture(0)
-cap = cv.VideoCapture('videos/supermoto_evening.mp4')
+# cap = cv.VideoCapture(0)
+cap = cv.VideoCapture('data/supermoto-evening.mp4')
 
+
+if cap.isOpened():
+    print("hehe?")
 
 def streamed_video():
 
@@ -97,6 +100,8 @@ def captured_just_canny():
         if cv.waitKey(1) == ord('q'):
             break
 
+
+captured_video_save_data()
 
 cap.release()
 cv.destroyAllWindows()
