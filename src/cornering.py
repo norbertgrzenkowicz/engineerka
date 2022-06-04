@@ -29,21 +29,6 @@ image = np.zeros((400, 400, 3), dtype="uint8")
 
 image[:] = (220, 220, 220)
 
-
-# int width = 500;
-# float miny = -1, maxy = 1;
-# Mat image = Mat::zeros(width,width,CV_8UC3);
-# vector<Point2f> list_point(width);
-# for(int i = 0; i < width; i++){
-#    list_point[i].x = i;
-#    float real_y = miny + ((maxy-miny)*i)/width;
-#    list_point[i].y = real_y*real_y;
-# }
-# //Draw the curve
-# for(int i = 1; i < width; i++) line(image,list_point[i-1],list_point[i],Scalar(255,255,255));
-# imshow("image",image);
-# waitKey();
-
 width = 400
 
 def draw_parabola_road(miny, maxy):
