@@ -114,12 +114,12 @@ def threshold_data():
         image_path = "data/raw/" + image
         img = cv.imread(image_path)
         gray_image = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-        ret, thresh = cv.threshold(gray_image, 80, 255, cv.THRESH_BINARY)
+        ret, thresh = cv.threshold(gray_image, 80, 255, cv.THRESH_TOZERO)
         name = './data/thresholded/' + image
         cv.imwrite(name, thresh)
 
 
-# threshold_data()
+threshold_data()
 
 cap.release()
 cv.destroyAllWindows()
