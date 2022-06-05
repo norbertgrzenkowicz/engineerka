@@ -2,58 +2,53 @@ import numpy as np
 import cv2
 from matplotlib import pyplot as plt
 
+class CornerAPI:
+    def __init__(self):
 
-def show_img_with_matplotlib(color_img, title, pos):
-    """Shows an image using matplotlib capabilities"""
+        self.fig = plt.figure(figsize=(2, 2))
+        plt.suptitle("road angle", fontsize = 14, fontweight='bold')
+        self.fig.patch.set_facecolor('silver')
+        self.width = 800
+        self.image = np.zeros((self.width, self.width, 3), dtype="uint8")
+        self.image[:] = (220, 220, 220)
 
-    # Convert BGR image to RGB
-    img_RGB = color_img[:, :, ::-1]
+        # def show_img_with_matplotlib(color_img, title, pos):
+        #     """Shows an image using matplotlib capabilities"""
+        #TODO IMPLEMENT PARENT CLASS WITH show_img_with_matplotlib and colors dict
 
-    ax = plt.subplot(2, 1, pos)
-    plt.imshow(img_RGB)
-    plt.title(title)
-    plt.axis('off')
+    def matplot(self, img, title):
+        img_RGB = img[:, :, ::-1]
 
-def matplot(img, title):
-    img_RGB = img[:, :, ::-1]
-
-    plt.imshow(img_RGB)
-    plt.title(title)
-    plt.show()
-
-fig = plt.figure(figsize=(2, 2))
-plt.suptitle("road angle", fontsize = 14, fontweight='bold')
-fig.patch.set_facecolor('silver')
-
-width = 800
-
-image = np.zeros((width, width, 3), dtype="uint8")
-
-image[:] = (220, 220, 220)
-
-def draw_parabola_road(miny, maxy):
-
-    point_list = [[],[]]
-    for count in range(width):
-        point_list[0].append(count)
-        real_y = miny + (maxy-miny)*count/width
-        point_list[1].append(real_y*real_y)
-
-    miny, maxy = miny*2, maxy*2
-    point_list2 = [[],[]]
-
-    for count in range(width):
-        point_list2[0].append(count)
-        real_y = miny + (maxy-miny)*count/width
-        point_list2[1].append(real_y*real_y)
+        plt.imshow(img_RGB)
+        plt.title(title)
+        plt.show()
 
 
-    for count in range(1, width):
-        cv2.line(image, (point_list2[0][count-1], int(point_list2[1][count-1])+maxy*5), (point_list2[0][count], int(point_list2[1][count]+maxy*5)), (255, 0, 255), 3)
-        cv2.line(image, (point_list[0][count-1], int(point_list[1][count-1])), (point_list[0][count], int(point_list[1][count])), (255, 0, 255), 3)
-        cv2.line(image, (point_list[0][count-1], int(point_list[1][count-1])+maxy*4), (point_list[0][count], int(point_list[1][count]+maxy*4)), (255, 0, 255), 3)
+    def draw_parabola_road(self, miny, maxy):
+
+        point_list = [[],[]]
+        for count in range(self.width):
+            point_list[0].append(count)
+            real_y = miny + (maxy-miny)*count/self.width 
+            point_list[1].append(real_y**2)
+
+        miny, maxy = miny*2, maxy*2
+        point_list2 = [[],[]]
+
+        for count in range(self.width):
+            point_list2[0].append(count)
+            real_y = miny + (maxy-miny)*count/self.width
+            point_list2[1].append(real_y**2)
 
 
-draw_parabola_road(-20, 20)
+        for count in range(1, self.width):
+            cv2.line(self.image, (point_list2[0][count-1], int(point_list2[1][count-1])+maxy*5), (point_list2[0][count], int(point_list2[1][count]+maxy*5)), (255, 0, 255), 3)
+            cv2.line(self.image, (point_list[0][count-1], int(point_list[1][count-1])), (point_list[0][count], int(point_list[1][count])), (255, 0, 255), 3)
+            cv2.line(self.image, (point_list[0][count-1], int(point_list[1][count-1])+maxy*4), (point_list[0][count], int(point_list[1][count]+maxy*4)), (255, 0, 255), 3)
 
-matplot(image, 'bottomtext')
+        self.matplot(self.image, 'bottomtext')
+        print("haha")
+
+road_angle = CornerAPI()
+
+road_angle.draw_parabola_road(-20, 20)
