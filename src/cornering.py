@@ -25,16 +25,16 @@ fig = plt.figure(figsize=(2, 2))
 plt.suptitle("road angle", fontsize = 14, fontweight='bold')
 fig.patch.set_facecolor('silver')
 
-image = np.zeros((400, 400, 3), dtype="uint8")
+width = 800
+
+image = np.zeros((width, width, 3), dtype="uint8")
 
 image[:] = (220, 220, 220)
-
-width = 400
 
 def draw_parabola_road(miny, maxy):
 
     point_list = [[],[]]
-    for count in range(400):
+    for count in range(width):
         point_list[0].append(count)
         real_y = miny + (maxy-miny)*count/width
         point_list[1].append(real_y*real_y)
@@ -42,17 +42,18 @@ def draw_parabola_road(miny, maxy):
     miny, maxy = miny*2, maxy*2
     point_list2 = [[],[]]
 
-    for count in range(400):
+    for count in range(width):
         point_list2[0].append(count)
         real_y = miny + (maxy-miny)*count/width
         point_list2[1].append(real_y*real_y)
 
 
-    for count in range(1, 400):
+    for count in range(1, width):
         cv2.line(image, (point_list2[0][count-1], int(point_list2[1][count-1])+maxy*5), (point_list2[0][count], int(point_list2[1][count]+maxy*5)), (255, 0, 255), 3)
         cv2.line(image, (point_list[0][count-1], int(point_list[1][count-1])), (point_list[0][count], int(point_list[1][count])), (255, 0, 255), 3)
+        cv2.line(image, (point_list[0][count-1], int(point_list[1][count-1])+maxy*4), (point_list[0][count], int(point_list[1][count]+maxy*4)), (255, 0, 255), 3)
 
 
 draw_parabola_road(-20, 20)
 
-matplot(image, 'tytul')
+matplot(image, 'bottomtext')
