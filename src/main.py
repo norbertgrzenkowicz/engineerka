@@ -1,3 +1,4 @@
+from abc import abstractmethod
 import sys  
 import cv2 as cv
 import os
@@ -13,51 +14,72 @@ try:
 except OSError:
     print('Error: Creating directory of data')
 
-#base cap
-# cap = cv.VideoCapture(0)
-cap = cv.VideoCapture('data/supermoto-evening.mp4')
+class Device:
+    def __init__(self):
+        self.cap = None
+        self.ret = None
+        self.frame = None
+        self.connect_output()
+
+    @abstractmethod
+    def streamed_video():
+        pass
+
+    @abstractmethod
+    def captured_video_save_data():
+        pass
+
+    @abstractmethod
+    def captured_canny():
+        pass
+
+    def connect_output(self):
+        self.cap = cv.VideoCapture('data/supermoto-evening.mp4')
+        # self.cap = cv.VideoCapture(0)
+
+        if self.cap.isOpened():
+            print("Succesfully opened a connection.")
+
+    def video_player(self, func):
+        while True:
+            # capture frame-by-frame
+            self.ret, self.frame = self.cap.read()        
+            
+            if not self.ret:
+            #if frame is read correctly ret is True
+                print("Cant receive frame (stream end?). Exiting..")
+                break
+
+            media_output = func(self.frame)
+
+            #display the resulting frame
+            cv.imshow('frame', media_output)            
+            if cv.waitKey(1) == ord('q'):
+                break
+            
+        self.cap.release()
+        cv.destroyAllWindows()
 
 
-if cap.isOpened():
-    print("hehe?")
+class Camera(Device):
+    def __init__(self):
+        pass
 
-def streamed_video():
-
-    if not cap.isOpened():
-        
-        print("Cannot open camera")
-        exit()
-
-    while True:
-        
-        # capture frame-by-frame
-        ret, frame = cap.read()        
-        
-        if not ret:
-        #if frame is read correctly ret is True
-            print("Cant receive frame (stream end?). Exiting..")
-            break
-        
+    def grayer(self, frame):
         #our operations on the frame come here
         gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
         
-        #display the resulting frame
-        cv.imshow('frame', gray)
-        if cv.waitKey(1) == ord('q'):
-            break
+        return gray
 
-def captured_video_save_data():
-    frame_per_second = cap.get(cv.CAP_PROP_FPS)
+    def captured_video_save_data(self, frame):
+        frame_per_second = self.cap.get(cv.CAP_PROP_FPS)
 
-    current_frame = 0
-    fps_calculator_previous = 0
-    every_x_sec = 3
-    current_frame_name_purpose = current_frame/30
+        current_frame = 0
+        fps_calculator_previous = 0
+        every_x_sec = 3
+        current_frame_name_purpose = current_frame/30
 
-    while cap.isOpened():    
-        ret, frame = cap.read()
-
-        if ret:
+        if self.ret:
             name = './data/supermoto_evening' + str(int(current_frame_name_purpose)) + '.jpg'
             fps_calculator = (current_frame / 30) % every_x_sec
 
@@ -67,59 +89,40 @@ def captured_video_save_data():
             fps_calculator_previous = fps_calculator
             current_frame += 1
             current_frame_name_purpose = current_frame/30
-
-        # if frame is read correctly ret is True
-        if not ret:
-            print("Can't receive frame (stream end?). Exiting ...")
-            break
         
-        #gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-        #cv.imshow('frame', frame)
+            #gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+            #cv.imshow('frame', frame)
 
-        if cv.waitKey(1) == ord('q'):
-            break
+    def captured_canny(self, frame):
+        # if not cap.isOpened():
+        #     print("Cannot open camera")
+        #     exit()
+            #our operations on the frame come here
+            gray = cv. cvtColor(frame, cv.COLOR_BGR2GRAY)
+            blur = cv.GaussianBlur(gray, (3,3), 0)
+            edges = cv.Canny(image=blur, threshold1=50, threshold2=100) # Canny Edge Detection
 
-def captured_just_canny():
-    if not cap.isOpened():
-        print("Cannot open camera")
-        exit()
-    while True:
-        # capture frame-by-frame
-        ret, frame = cap.read()        
-        #if frame is read correctly ret is True
-        if not ret:
-            print("Cant receive frame (stream end?). Exiting..")
-            break
-        #our operations on the frame come here
-        gray = cv. cvtColor(frame, cv.COLOR_BGR2GRAY)
-        blur = cv.GaussianBlur(gray, (3,3), 0)
-        edges = cv.Canny(image=blur, threshold1=50, threshold2=100) # Canny Edge Detection
+            #display the resulting frame
+            cv.imshow('Canny Edge Detection', edges)
 
-        #display the resulting frame
-        cv.imshow('Canny Edge Detection', edges)
-        if cv.waitKey(1) == ord('q'):
-            break
+    def threshold_data(self):
+        try:
+            if not os.path.exists('data/thresholded'):
+                os.makedirs('data/thresholded')
 
-def threshold_data():
-    try:
-        if not os.path.exists('data/thresholded'):
-            os.makedirs('data/thresholded')
-
-    except OSError:
-        print('Error: Creating directory of data/thresholded')
-    
-    data_dir = 'data/raw'
-    
-    for image in os.listdir(data_dir):
-        image_path = "data/raw/" + image
-        img = cv.imread(image_path)
-        gray_image = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-        ret, thresh = cv.threshold(gray_image, 80, 255, cv.THRESH_TOZERO)
-        name = './data/thresholded/' + image
-        cv.imwrite(name, thresh)
+        except OSError:
+            print('Error: Creating directory of data/thresholded')
+        
+        data_dir = 'data/raw'
+        
+        for image in os.listdir(data_dir):
+            image_path = "data/raw/" + image
+            img = cv.imread(image_path)
+            gray_image = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+            ret, thresh = cv.threshold(gray_image, 80, 255, cv.THRESH_TOZERO)
+            name = './data/thresholded/' + image
+            cv.imwrite(name, thresh)
 
 
-threshold_data()
-
-cap.release()
-cv.destroyAllWindows()
+gopro_footage = Camera()
+gopro_footage.captured_canny

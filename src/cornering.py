@@ -23,7 +23,6 @@ class CornerAPI:
         plt.title(title)
         plt.show()
 
-
     def draw_parabola_road(self, miny, maxy):
 
         point_list = [[],[]]
@@ -40,14 +39,12 @@ class CornerAPI:
             real_y = miny + (maxy-miny)*count/self.width
             point_list2[1].append(real_y**2)
 
-
         for count in range(1, self.width):
             cv2.line(self.image, (point_list2[0][count-1], int(point_list2[1][count-1])+maxy*5), (point_list2[0][count], int(point_list2[1][count]+maxy*5)), (255, 0, 255), 3)
             cv2.line(self.image, (point_list[0][count-1], int(point_list[1][count-1])), (point_list[0][count], int(point_list[1][count])), (255, 0, 255), 3)
             cv2.line(self.image, (point_list[0][count-1], int(point_list[1][count-1])+maxy*4), (point_list[0][count], int(point_list[1][count]+maxy*4)), (255, 0, 255), 3)
 
         self.matplot(self.image, 'bottomtext')
-        print("haha")
 
 road_angle = CornerAPI()
 
