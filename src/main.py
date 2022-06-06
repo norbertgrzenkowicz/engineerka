@@ -16,10 +16,7 @@ except OSError:
 
 class Device:
     def __init__(self):
-        self.cap = None
-        self.ret = None
-        self.frame = None
-        self.connect_output()
+        pass
 
     @abstractmethod
     def streamed_video():
@@ -63,7 +60,10 @@ class Device:
 
 class Camera(Device):
     def __init__(self):
-        pass
+        self.cap = None
+        self.ret = None
+        self.frame = None
+        self.connect_output()
 
     def grayer(self, frame):
         #our operations on the frame come here
@@ -71,7 +71,7 @@ class Camera(Device):
         
         return gray
 
-    def captured_video_save_data(self, frame):
+    def captured_video_save_data(self):
         frame_per_second = self.cap.get(cv.CAP_PROP_FPS)
 
         current_frame = 0
@@ -85,7 +85,7 @@ class Camera(Device):
 
             if (fps_calculator - fps_calculator_previous < 0):
                 print("frameshotting")
-                cv.imwrite(name, frame)
+                cv.imwrite(name, self.frame)
             fps_calculator_previous = fps_calculator
             current_frame += 1
             current_frame_name_purpose = current_frame/30
@@ -93,12 +93,12 @@ class Camera(Device):
             #gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
             #cv.imshow('frame', frame)
 
-    def captured_canny(self, frame):
+    def captured_canny(self):
         # if not cap.isOpened():
         #     print("Cannot open camera")
         #     exit()
             #our operations on the frame come here
-            gray = cv. cvtColor(frame, cv.COLOR_BGR2GRAY)
+            gray = cv. cvtColor(self.frame, cv.COLOR_BGR2GRAY)
             blur = cv.GaussianBlur(gray, (3,3), 0)
             edges = cv.Canny(image=blur, threshold1=50, threshold2=100) # Canny Edge Detection
 
@@ -125,4 +125,4 @@ class Camera(Device):
 
 
 gopro_footage = Camera()
-gopro_footage.captured_canny
+gopro_footage.captured_canny()
