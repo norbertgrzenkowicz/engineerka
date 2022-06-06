@@ -3,6 +3,7 @@ import sys
 import cv2 as cv
 import os
 import numpy as np
+from matplotlib import pyplot as plt
 
 print(cv.__version__)
 # print(sys.version)
@@ -30,13 +31,6 @@ class Device:
     def captured_canny():
         pass
 
-    def connect_output(self):
-        self.cap = cv.VideoCapture('data/supermoto-evening.mp4')
-        # self.cap = cv.VideoCapture(0)
-
-        if self.cap.isOpened():
-            print("Succesfully opened a connection.")
-
     def video_player(self, func):
         while True:
             # capture frame-by-frame
@@ -47,7 +41,7 @@ class Device:
                 print("Cant receive frame (stream end?). Exiting..")
                 break
 
-            media_output = func(self.frame)
+            media_output = func()
 
             #display the resulting frame
             cv.imshow('frame', media_output)            
@@ -57,6 +51,17 @@ class Device:
         self.cap.release()
         cv.destroyAllWindows()
 
+    def show_img_with_matplotlib(self, color_img, title, pos):
+        """Shows an image using matplotlib capabilities"""
+
+        # Convert BGR image to RGB
+        img_RGB = color_img[:, :, ::-1]
+
+        ax = plt.subplot(1, 3, pos)
+        plt.imshow(img_RGB)
+        plt.title(title)
+        plt.axis('off')
+
 
 class Camera(Device):
     def __init__(self):
@@ -64,6 +69,13 @@ class Camera(Device):
         self.ret = None
         self.frame = None
         self.connect_output()
+
+    def connect_output(self):
+        self.cap = cv.VideoCapture('data/supermoto-evening.mp4')
+        # self.cap = cv.VideoCapture(0)
+
+        if self.cap.isOpened():
+            print("Succesfully opened a connection.")
 
     def grayer(self, frame):
         #our operations on the frame come here
@@ -98,7 +110,7 @@ class Camera(Device):
         #     print("Cannot open camera")
         #     exit()
             #our operations on the frame come here
-            gray = cv. cvtColor(self.frame, cv.COLOR_BGR2GRAY)
+            gray = cv.cvtColor(self.frame, cv.COLOR_BGR2GRAY)
             blur = cv.GaussianBlur(gray, (3,3), 0)
             edges = cv.Canny(image=blur, threshold1=50, threshold2=100) # Canny Edge Detection
 
@@ -125,4 +137,4 @@ class Camera(Device):
 
 
 gopro_footage = Camera()
-gopro_footage.captured_canny()
+gopro_footage.video_player(gopro_footage.captured_canny)
