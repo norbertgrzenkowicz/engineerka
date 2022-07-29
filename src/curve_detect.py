@@ -9,7 +9,7 @@ try:
 except OSError:
     print('Error: Creating directory of data')
 
-inputImage = cv2.imread("data\blind_curve\supermoto_evening_mask24.jpg")
+inputImage = cv2.imread("data/raw/supermoto_evening24.jpg")
 minLineLength = 30
 maxLineGap = 5
 lines = cv2.HoughLinesP(inputImage,cv2.HOUGH_PROBABILISTIC, np.pi/180, 30, minLineLength,maxLineGap)

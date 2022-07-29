@@ -26,7 +26,7 @@ plt.suptitle("Thresholding using np.arange() to create the different threshold v
 fig.patch.set_facecolor('silver')
 
 # Load the image and convert it to grayscale:
-image = cv2.imread('data/supermoto_evening330.jpg')
+image = cv2.imread('data/raw/supermoto_evening72.jpg')
 gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
 # Plot the grayscale images and the histograms:
