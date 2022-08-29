@@ -12,11 +12,13 @@ https://www.geeksforgeeks.org/line-detection-python-opencv-houghline-method/
 https://www.tandfonline.com/doi/ref/10.1080/22797254.2019.1699449?scroll=top
 
 2. Software
-* Tensorflow lite
+* Pytorch
 * OpenCV
 * Videos handling Interface
-* ML model
 
+29.08.22r.
+Roadmap again much cleaner than before in README.md. Might be much easier to do than expected.
+Looking for main development in September.
 
 26.05.2022R.
 ITs been long time. 
