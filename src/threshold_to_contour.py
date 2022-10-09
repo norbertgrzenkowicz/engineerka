@@ -4,10 +4,9 @@ Thresholding color images
 
 # Import required packages:
 import cv2
-from main import Device
-from matplotlib import pyplot as plt
+from Device import Device
 
-class Threshold(Device):
+class thresholdToContour(Device):
     def __init__(self):
         """hehe"""
 
@@ -32,13 +31,13 @@ class Threshold(Device):
         self.show_img_with_matplotlib(thresh1, "threshold (120) BGR image", 2)
         self.show_img_with_matplotlib(bgr_thresh, "threshold (120) each channel and merge", 3)
 
-Thresh = Threshold()
+# Thresh = Threshold()
 
-# Create the dimensions of the figure and set title and color:
-fig = plt.figure(figsize=(12, 4))
-plt.suptitle("Thresholding BGR images", fontsize=14, fontweight='bold')
-fig.patch.set_facecolor('silver')
+# # Create the dimensions of the figure and set title and color:
+# fig = plt.figure(figsize=(12, 4))
+# plt.suptitle("Thresholding BGR images", fontsize=14, fontweight='bold')
+# fig.patch.set_facecolor('silver')
 
-Thresh.thresholding()
-# Show the Figure:
-plt.show()
+# Thresh.thresholding()
+# # Show the Figure:
+# plt.show()
