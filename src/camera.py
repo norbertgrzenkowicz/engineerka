@@ -21,9 +21,6 @@ class Camera(Device):
         if self.cap.isOpened():
             logging.info("Succesfully opened a connection.")
 
-    def grayer(self, frame):
-        return cv.cvtColor(frame, cv.COLOR_BGR2GRAY) 
-
     def captured_video_save_data(self):
 
         dataPath = 'data/unlabeled' # TODO: try if Path() is available here
@@ -68,7 +65,7 @@ class Camera(Device):
             #display the resulting frame
             cv.imshow('Canny Edge Detection', edges)
 
-    def threshold_data(self):
+    def threshold_data(self, dataPath):
         dataPath = 'data/thresholded'
         try:
             if not os.path.exists(dataPath):
@@ -86,11 +83,3 @@ class Camera(Device):
             ret, thresh = cv.threshold(gray_image, 80, 255, cv.THRESH_TOZERO)
             name = './' + dataPath + '/' + image
             cv.imwrite(name, thresh)
-
-    def augment_namefiles(self, dataPath):
-        # dataPath = '/home/norbert/Documents/repos/engineerka/jupyter/~/bike_dataset/images'
-        for count, image_name in enumerate(os.listdir(dataPath)):
-            name = 'bike' + str(int(count)) + '.png'
-            src = f"{dataPath}/{image_name}" 
-            dst = f"{dataPath}/{name}"
-            os.rename(src, dst)

@@ -10,6 +10,7 @@ class curveDetection(Device):
         self.inputImage = cv2.imread(imagePath, cv2.IMREAD_GRAYSCALE)
         self.minLineLength = 30
         self.maxLineGap = 5
+        self.houghing()
 
     def houghing(self):
         lines = cv2.HoughLinesP(self.inputImage,cv2.HOUGH_PROBABILISTIC, np.pi/180, 30, self.minLineLength,self.maxLineGap)

@@ -5,11 +5,13 @@ import Device
 
 from skimage.filters import threshold_otsu
 
-class kCluster(Device): # TODO: KWARGS, ARGS
+class kCluster(Device): # TODO: KWARGS, ARGS TODO: Im not sure kCluster shoud be subclass of Device? Maybe thresholding
     def __init__(self, imagePath):
         self.img = cv2.imread(imagePath)
         self.img_rgb=cv2.cvtColor(self.img,cv2.COLOR_BGR2RGB)
         self.img_gray=cv2.cvtColor(self.img_rgb,cv2.COLOR_RGB2GRAY)
+        self.figgin()
+        self.imaging()
 
     def color_quantization(self, image, k):
         """Performs color quantization using K-means clustering algorithm"""
@@ -38,7 +40,7 @@ class kCluster(Device): # TODO: KWARGS, ARGS
         plt.suptitle("Color quantization using K-means clustering algorithm", fontsize=14, fontweight='bold')
         fig.patch.set_facecolor('silver')
 
-    def imagging(self):
+    def imaging(self):
         img_rgb=cv2.cvtColor(self.img,cv2.COLOR_BGR2RGB)
         img_gray=cv2.cvtColor(img_rgb,cv2.COLOR_RGB2GRAY)
 
@@ -64,13 +66,19 @@ class kCluster(Device): # TODO: KWARGS, ARGS
 
         # Show the Figure:
         plt.show()
-# Apply color quantization:
-# color_3 = color_quantization(img, 3)
-# color_5 = color_quantization(img, 5)
-# color_11 = color_quantization(img,  10)
-# color_10 = color_quantization(img, 4)
-# color_20 = color_quantization(img, 20)
-# color_40 = color_quantization(img, 40)
+    
+    def kClustering(self):
+        self.iDunno()
+
+        self.plottin()
+        # TODO: wtf is that \/
+        # Apply color quantization:
+        # color_3 = color_quantization(img, 3)
+        # color_5 = color_quantization(img, 5)
+        # color_11 = color_quantization(img,  10)
+        # color_10 = color_quantization(img, 4)
+        # color_20 = color_quantization(img, 20)
+        # color_40 = color_quantization(img, 40)
 
 
 

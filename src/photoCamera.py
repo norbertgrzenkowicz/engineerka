@@ -16,7 +16,6 @@ class photoCamera(Device):
 
     def connect_output(self, imagePath):
         self.frame = cv.imread(imagePath)
-        # self.cap = cv.VideoCapture(0)
 
         if self.cap.isOpened():
             logging.info("Succesfully opened a connection.")

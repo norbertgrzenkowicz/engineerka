@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 from matplotlib import pyplot as plt
 
-class CornerAPI:
+class CornerAPI: # TODO: create "mainAPI" class to be parent of kCluster/thresholders?
     def __init__(self):
 
         self.fig = plt.figure(figsize=(2, 2))

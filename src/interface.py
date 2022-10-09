@@ -1,7 +1,11 @@
 import sys
 import os
 import logging
+
+from matplotlib import image
+from dataHandler import dataHandler
 from pathlib import Path
+from mainAPI import mainAPI
 
 try:
     if not os.path.exists('data'):
@@ -9,35 +13,15 @@ try:
 except OSError:
     logging.error('Creating directory of data')
 
-class Interface:
+class Interface(dataHandler):
     def __init__(self):
         self.something = False
         self.log = logging.getLogger("BRUH")
-        self.testSegmentedImagePath = Path("/home/norbert/Documents/datasets/segmentedRoads/curvy/R0.jpg")
-        self.testImagePath = Path("augment_the_curve.jpg")
+        self.API = mainAPI()
 
-    def CameraCall(self):
-        from camera import Camera
+    def thresholdThisPicture(self, imagePath):
+        thresholdedImagePath = self.API.threshold(imagePath)
 
-        GoPro = Camera()
-        GoPro.connect_output()
-        self.log.info("yo ma men your camera is connected")
-
-    def photoCameraCall(self):
-        from photoCamera import photoCamera
-
-        Images = photoCamera()
-        self.log.info("photo picutred")
-
-
-    def scikitThreshold(self):
-        from scikitThreshold import scikitThreshold
-        Image = "something"
-        Augmenter = scikitThreshold(self.testImagePath)
-        self.log.info("we do a little bit of figgin brother")
-        Augmenter.figging()
-
-    def kCluster(self):
-        from kCluster import kCluster
-        Cluster = kCluster(self.testImagePath)
-        self.log.ino("yee ive klustrd someting for ya")
+    def kClusterThisPicture(self, imagePath):
+        self.API.kCluster(imagePath)
+        

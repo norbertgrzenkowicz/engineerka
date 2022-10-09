@@ -5,6 +5,7 @@ Thresholding color images
 # Import required packages:
 import cv2
 from Device import Device
+import threshold # TODO: threshold base class, some other thersholding methods, their subclasses
 
 class thresholdToContour(Device):
     def __init__(self):

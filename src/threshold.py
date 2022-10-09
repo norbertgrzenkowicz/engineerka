@@ -5,6 +5,7 @@ Simple thresholding applied to a real image using np.arange() to create the diff
 # Import required packages:
 
 import Device as Device
+from dataHandler import dataHandler
 
 import numpy as np
 import cv2
@@ -49,4 +50,6 @@ class threshold(Device):
 
         # Show the Figure:
         plt.show()
+
+        return "ther is going to be thresholded image path! in near future..."
             
