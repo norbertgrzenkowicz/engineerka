@@ -14,18 +14,6 @@ class Device:
     def __init__(self):
         pass
 
-    @abstractmethod
-    def streamed_video():
-        pass
-
-    @abstractmethod
-    def captured_video_save_data():
-        pass
-
-    @abstractmethod
-    def captured_canny():
-        pass
-
     def video_player(self, func):
         while True:
             # capture frame-by-frame

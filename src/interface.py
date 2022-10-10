@@ -7,6 +7,8 @@ from dataHandler import dataHandler
 from pathlib import Path
 from mainAPI import mainAPI
 
+import getopt
+
 try:
     if not os.path.exists('data'):
         os.makedirs('data')
@@ -16,12 +18,59 @@ except OSError:
 class Interface(dataHandler):
     def __init__(self):
         self.something = False
-        self.log = logging.getLogger("BRUH")
+        self.path = ''
         self.API = mainAPI()
+        self.passing_args(sys.argv)
+        self.API.camOrPhoto()
+        self.log = logging.getLogger("BRUH")
 
-    def thresholdThisPicture(self, imagePath):
-        thresholdedImagePath = self.API.threshold(imagePath)
+    def passing_args(self, argv):
+        if __name__ == "__main__":
+            arg_help = "{0} -p <path of footage> \n-v <isVideo> \n-t <threshold photo> \n-s <scikit_threshold>".format(argv[0])
+            
+            try:
+                opts, args = getopt.getopt(argv[1:], "hi:u:o:", ["help", "input=", 
+                "user=", "output=", "path=", 'threshold', 'scikitThreshold', 'clahe', 'kCluster', 'contour', 'datahandler'])
+            except:
+                print("Nieznane parametry. Sprobuj ponownie.")
+                print(arg_help)
+                sys.exit(2)
+            
+            for opt, arg in opts:
+                if opt in ("-h", "--help"):
+                    print(arg_help)
+                    sys.exit(2)
+                elif opt in ("-p", "--path"):
+                    self.path = arg
+                    self.API.setPath(self.path)
+
+                elif opt in ("-t", "--threshold"):
+                    print(self.thresholdThisPicture())
+                    
+                elif opt in ("-s", "--scikitthreshold"):
+                    print("scikit-thresholding placeholder")
+                elif opt in ("-c", "--clahe"):
+                    print("clahe placeholder")
+                elif opt in ("-k", "--kcluster"):
+                    print("kCluster placeholder")
+                elif opt in ("-tc", "--contour"):
+                    print("contour placeholder")                
+                elif opt in ("-d", "--datahandler"):
+                    print("datahandler placeholder")
+
+    def thresholdThisPicture(self):
+        return self.API.threshold()
+
+    def scikitThresholdThisPicture(self):
+        return self.API.scikitThreshold()
+
+    def thresholdToContourThisPicture(self):
+        return self.API.thresholdToContour()
 
     def kClusterThisPicture(self, imagePath):
         self.API.kCluster(imagePath)
-        
+
+    def cropThisDataset(self, inputPath, outputPath):
+        pass #TODO
+
+iface = Interface()

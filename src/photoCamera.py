@@ -9,13 +9,20 @@ from pathlib import Path
 import logging
 
 class photoCamera(Device):
-    def __init__(self):
+    def __init__(self, imagePath):
         self.cap = None
         self.ret = None
         self.frame = None
+        self.connect_output(imagePath)
 
     def connect_output(self, imagePath):
         self.frame = cv.imread(imagePath)
 
-        if self.cap.isOpened():
-            logging.info("Succesfully opened a connection.")
+        logging.warning("Otwarto polaczenie.")
+        # while True:
+        #     cv.imshow('Zdjecie',self.frame)
+        #     if cv.waitKey(1) == ord('q'):
+        #         break
+
+        # if self.cap.isOpened():
+        #     logging.warning("Otwarto polaczenie.")

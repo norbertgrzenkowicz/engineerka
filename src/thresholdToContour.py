@@ -8,15 +8,13 @@ from Device import Device
 import threshold # TODO: threshold base class, some other thersholding methods, their subclasses
 
 class thresholdToContour(Device):
-    def __init__(self):
+    def __init__(self, mediaPath):
         """hehe"""
+        self.mediaPath = mediaPath
 
     def thresholding(self):
         # Load the image and convert it to grayscale:
-        image = cv2.imread('data/supermoto_evening99.jpg')
-
-        # Plot the image:
-        self.show_img_with_matplotlib(image, "image", 1)
+        image = cv2.imread(self.mediaPath)
 
         # Apply cv2.threshold():
         ret1, thresh1 = cv2.threshold(image, 80, 255, cv2.THRESH_BINARY)
@@ -31,14 +29,9 @@ class thresholdToContour(Device):
         # Plot the created images
         self.show_img_with_matplotlib(thresh1, "threshold (120) BGR image", 2)
         self.show_img_with_matplotlib(bgr_thresh, "threshold (120) each channel and merge", 3)
-
-# Thresh = Threshold()
+        # plt.show()
 
 # # Create the dimensions of the figure and set title and color:
 # fig = plt.figure(figsize=(12, 4))
 # plt.suptitle("Thresholding BGR images", fontsize=14, fontweight='bold')
 # fig.patch.set_facecolor('silver')
-
-# Thresh.thresholding()
-# # Show the Figure:
-# plt.show()

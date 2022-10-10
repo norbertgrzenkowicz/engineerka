@@ -9,64 +9,77 @@ from pathlib import Path
 import logging # TODO: just one logger on whole project eh?
 
 class Camera(Device):
-    def __init__(self):
+    def __init__(self, videoPath='supermoto-evening.mp4'):
         self.cap = None
         self.ret = None
         self.frame = None
+        self.videoPath = videoPath
+        self.current_frame = 0
+        self.fps_calculator_previous = 0
+        self.every_x_sec = 3
+
         self.connect_output()
+        self.video_player()
 
     def connect_output(self, isLive=False):
-        self.cap = cv.VideoCapture(0) if isLive else cv.VideoCapture('supermoto-evening.mp4')
+        self.cap = cv.VideoCapture(0) if isLive else cv.VideoCapture(self.videoPath)
 
         if self.cap.isOpened():
-            logging.info("Succesfully opened a connection.")
+            logging.warning("Succesfully opened a connection.")
 
-    def captured_video_save_data(self):
+    def video_player(self):
+        while True:
+            # capture frame-by-frame
+            self.ret, self.frame = self.cap.read()        
+            
+            if not self.ret:
+            #if frame is read correctly ret is True
+                print("Cant receive frame (stream end?). Exiting..")
+                break
 
-        dataPath = 'data/unlabeled' # TODO: try if Path() is available here
+            # self.captured_video_save_data()
 
+            #display the resulting frame
+            cv.imshow('frame', self.frame)   
+            if cv.waitKey(1) == ord('q'):
+                break
+            
+        self.cap.release()
+        cv.destroyAllWindows()
+
+    def captured_video_save_data(self, dataPath):
+
+        # dataPath = '/data/unlabeled_test' # TODO: try if Path() is available here
         try:
             if not os.path.exists(dataPath):
                 os.makedirs(dataPath)
         except OSError:
-            logging.error('Creating directory of ', dataPath)
+            logging.error('Tworzenie sciezki', dataPath)
 
         frame_per_second = self.cap.get(cv.CAP_PROP_FPS)
 
-        current_frame = 0
-        fps_calculator_previous = 0
-        every_x_sec = 3
-        current_frame_name_purpose = current_frame/30
-
+        current_frame_name_purpose = self.current_frame/30
         if self.ret:
-            name = './' + dataPath + str(int(current_frame_name_purpose)) + '.png'
-            fps_calculator = (current_frame / 30) % every_x_sec
-
-            if (fps_calculator - fps_calculator_previous < 0):
-                logging.info("frameshooting")
+            name = '/home/norbert/Documents/repos/engineerka/' + dataPath + '/street_3_' + str(int(current_frame_name_purpose)) + '.png'
+            print(name)
+            fps_calculator = (self.current_frame / 30) % self.every_x_sec
+            if (fps_calculator - self.fps_calculator_previous < 0):
+                print("Klatka")
                 cv.imwrite(name, self.frame)
-            fps_calculator_previous = fps_calculator
-            current_frame += 1
-            current_frame_name_purpose = current_frame/30
-        
-            #gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-            #cv.imshow('frame', frame)
+            self.fps_calculator_previous = fps_calculator
+            self.current_frame += 1
+            current_frame_name_purpose = self.current_frame/30
+
 
     def capturedCanny(self):
-        # if not cap.isOpened():
-        #     print("Cannot open camera")
-        #     exit()
-            #our operations on the frame come here
+        gray = cv.cvtColor(self.frame, cv.COLOR_BGR2GRAY)
+        blur = cv.GaussianBlur(gray, (3,3), 0)
+        edges = cv.Canny(image=blur, threshold1=50, threshold2=100)
 
-            gray = cv.cvtColor(self.frame, cv.COLOR_BGR2GRAY)
-            blur = cv.GaussianBlur(gray, (3,3), 0)
-            edges = cv.Canny(image=blur, threshold1=50, threshold2=100) # Canny Edge Detection
-
-            #display the resulting frame
-            cv.imshow('Canny Edge Detection', edges)
+        return edges
 
     def threshold_data(self, dataPath):
-        dataPath = 'data/thresholded'
+        # dataPath = 'data/thresholded'
         try:
             if not os.path.exists(dataPath):
                 os.makedirs(dataPath)
