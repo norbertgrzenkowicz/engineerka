@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt, image # from matplotlib import image
 
 from camera import Camera
 from photoCamera import photoCamera
-from clahe import clahe
+# from clahe import clahe
 from kCluster import kCluster
 from threshold import Threshold
 from scikitThreshold import scikitThreshold
@@ -44,15 +44,15 @@ class mainAPI:
 
     def scikitThreshold(self):
         scikitThresholder = scikitThreshold(self.mediaPath)
-        scikitThresholder.scikitThresholding()
+        return scikitThresholder.scikitThresholding()
 
     def thresholdToContour(self):
-        thresholder = thresholdToContour()
-        thresholder.thresholding()
+        thresholder = thresholdToContour(self.mediaPath)
+        return thresholder.thresholding()
 
     def kCluster(self):
         kClusterer = kCluster(self.mediaPath)
-        kClusterer.kClustering()
+        return kClusterer.kClustering()
     
     
     # def curveDetect(self.path):

@@ -7,12 +7,13 @@ import cv2
 import matplotlib.pyplot as plt
 from skimage.filters import (threshold_otsu, threshold_triangle, threshold_niblack, threshold_sauvola)
 from skimage import img_as_ubyte
-import threshold
+from threshold import Threshold
 
-class scikitThreshold(threshold):
+class scikitThreshold(Threshold):
     def __init__(self, imagePath):
         self.image = cv2.imread(imagePath)
         self.gray_image = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
+        self.setSubPlot(3, 3)
         self.figging()
 
     def figging(self):
@@ -57,6 +58,9 @@ class scikitThreshold(threshold):
 
         # Show the Figure:
         plt.show()
+
     def scikitThresholding(self):
         self.calcHist()
         self.someAlgos()
+
+        return "path in future"

@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
-import Device
+from Device import Device
 
 from skimage.filters import threshold_otsu
 
@@ -10,6 +10,8 @@ class kCluster(Device): # TODO: KWARGS, ARGS TODO: Im not sure kCluster shoud be
         self.img = cv2.imread(imagePath)
         self.img_rgb=cv2.cvtColor(self.img,cv2.COLOR_BGR2RGB)
         self.img_gray=cv2.cvtColor(self.img_rgb,cv2.COLOR_RGB2GRAY)
+        self.filtered = None
+        self.setSubPlot(2, 2)
         self.figgin()
         self.imaging()
 
@@ -51,34 +53,34 @@ class kCluster(Device): # TODO: KWARGS, ARGS TODO: Im not sure kCluster shoud be
         return np.dstack([r,g,b])
 
     def iDunno(self):
-        thresh = self.threshold_otsu(self.img_gray)
+        thresh = threshold_otsu(self.img_gray)
         img_otsu  = self.img_gray < thresh
-        filtered = self.filter_image(self.img, img_otsu)
+        self.filtered = self.filter_image(self.img, img_otsu)
 
     def plottin(self):
         # Plot the images:
+        # Apply color quantization:
+        color_3 = self.color_quantization(self.img, 3)
+        color_5 = self.color_quantization(self.img, 5)
+        # color_11 = self.color_quantization(self.img,  10)
+        # color_10 = self.color_quantization(self.img, 4)
+        # color_20 = self.color_quantization(self.img, 20)
+        # color_40 = self.color_quantization(self.img, 40)
+
         self.show_img_with_matplotlib(self.img, "original image", 1)
-        # show_img_with_matplotlib(color_3, "color quantization (k = 3)", 2)
-        # show_img_with_matplotlib(color_5, "color quantization (k = 5)", 3)
-        self.color_quantizationshow_img_with_matplotlib(self.filtered, "color quantization (k = 5)", 2)
-        # show_img_with_matplotlib(color_20, "color quantization (k = 20)", 5)
-        # show_img_with_matplotlib(color_40, "color quantization (k = 40)", 6)
+        self.show_img_with_matplotlib(color_3, "color quantization (k = 3)", 2)
+        self.show_img_with_matplotlib(color_5, "color quantization (k = 5)", 3)
+        # self.show_img_with_matplotlib(self.filtered, "color quantization (k = 5)", 2)
+        # self.show_img_with_matplotlib(color_20, "color quantization (k = 20)", 2)
+        # self.show_img_with_matplotlib(color_40, "color quantization (k = 40)", 3)
 
         # Show the Figure:
         plt.show()
     
     def kClustering(self):
         self.iDunno()
-
         self.plottin()
-        # TODO: wtf is that \/
-        # Apply color quantization:
-        # color_3 = color_quantization(img, 3)
-        # color_5 = color_quantization(img, 5)
-        # color_11 = color_quantization(img,  10)
-        # color_10 = color_quantization(img, 4)
-        # color_20 = color_quantization(img, 20)
-        # color_40 = color_quantization(img, 40)
+        return "path in future"
 
 
 

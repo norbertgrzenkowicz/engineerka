@@ -17,11 +17,9 @@ def rename2(dataPath):
     for count, image_name in enumerate(os.listdir(dataPath)):
         name = 'bike' + str(int(count)) + '.png'
         # types = {'um_lane': 'um', 'um_road': 'um', 'umm_road': 'umm', 'uu_road': 'uu'}
-        types = {'road': 'road_'}
+        types = {'_______________________________________________________________________________________': '_'}
         for key, values in types.items():
             if key in image_name:
                 src = f"{dataPath}/{image_name}"  
                 dst = f"{dataPath}/{image_name.replace(key, values)}"
                 os.rename(src, dst)
-
-

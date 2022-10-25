@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 import os
 
-import Device as Device
+from Device import Device
 
 
 class curveDetection(Device):

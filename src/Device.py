@@ -12,7 +12,9 @@ import logging # TODO: passing logging next please
 
 class Device:
     def __init__(self):
-        pass
+        self.subplot_row = 1
+        self.subplot_col = 1
+
 
     def video_player(self, func):
         while True:
@@ -40,11 +42,11 @@ class Device:
         # Convert BGR image to RGB
         img_RGB = color_img[:, :, ::-1]
 
-        ax = plt.subplot(1, 3, pos)
+        ax = plt.subplot(self.subplot_row, self.subplot_col, pos)
         plt.imshow(img_RGB)
         plt.title(title)
         plt.axis('off')
 
-# gopro_footage = Camera()
-# gopro_footage.video_player(gopro_footage.captured_canny)
-# gopro_footage.captured_canny()
+    def setSubPlot(self, rows, cols):
+        self.subplot_row = rows
+        self.subplot_col = cols

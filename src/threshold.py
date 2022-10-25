@@ -25,10 +25,10 @@ class Threshold(Device):
         gray_image = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
 
         # Plot the grayscale images and the histograms:
-        # self.show_img_with_matplotlib(cv2.cvtColor(gray_image, cv2.COLOR_GRAY2BGR), "img", 1)
+        self.show_img_with_matplotlib(cv2.cvtColor(gray_image, cv2.COLOR_GRAY2BGR), "img", 1)
         ima = cv2.cvtColor(gray_image, cv2.COLOR_GRAY2BGR)
         while True:
-            cv2.imshow('Zdjecie',self.frame)
+            cv2.imshow('Zdjecie',self.image)
             if cv2.waitKey(1) == ord('q'):
                 break
 
@@ -47,10 +47,10 @@ class Threshold(Device):
             ret, thresh = cv2.threshold(gray_image, threshold, 255, cv2.THRESH_BINARY)
             thresholded_images.append(thresh)
 
-        # Show the thresholded images:
+        # # Show the thresholded images:
         # for index, (thresholded_image, threshold_value) in enumerate(zip(thresholded_images, threshold_values)):
-            # show_img_with_matplotlib(cv2.cvtColor(thresholded_image, cv2.COLOR_GRAY2BGR), "threshold = " + str(threshold_value),
-                                    #  index + 2)
+        #     self.show_img_with_matplotlib(cv2.cvtColor(thresholded_image, cv2.COLOR_GRAY2BGR), "threshold = " + str(threshold_value),
+        #                              index + 2)
 
         # Show the Figure:
         plt.show()
