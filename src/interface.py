@@ -42,6 +42,7 @@ class Interface(dataHandler):
                     sys.exit(2)
                 elif opt in ("-p", "--path"):
                     self.path = arg
+                    print(self.path)
                     self.API.setPath(self.path)
 
                 elif opt in ("-t", "--threshold"):

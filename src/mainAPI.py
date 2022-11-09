@@ -20,7 +20,7 @@ class mainAPI:
         self.mediaPath = ''
 
     def camOrPhoto(self):
-        if self.mediaPath.endswith('.mp4'):
+        if self.mediaPath.endswith('.MP4'):
             media = Camera(videoPath=self.mediaPath)
         elif self.mediaPath.endswith('.png'):
             media = photoCamera(self.mediaPath)

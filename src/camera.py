@@ -16,7 +16,7 @@ class Camera(Device):
         self.videoPath = videoPath
         self.current_frame = 0
         self.fps_calculator_previous = 0
-        self.every_x_sec = 3
+        self.every_x_sec = 0.5
 
         self.connect_output()
         self.video_player()
@@ -37,7 +37,7 @@ class Camera(Device):
                 print("Cant receive frame (stream end?). Exiting..")
                 break
 
-            # self.captured_video_save_data()
+            self.captured_video_save_data('/home/norbert/Documents/repos/engineerka/data/apex_extended')
 
             #display the resulting frame
             cv.imshow('frame', self.frame)   
@@ -58,17 +58,17 @@ class Camera(Device):
 
         frame_per_second = self.cap.get(cv.CAP_PROP_FPS)
 
-        current_frame_name_purpose = self.current_frame/30
+        current_frame_name_purpose = self.current_frame/15
         if self.ret:
-            name = '/home/norbert/Documents/repos/engineerka/' + dataPath + '/street_3_' + str(int(current_frame_name_purpose)) + '.png'
+            name = '/home/norbert/Documents/repos/engineerka/data' + '/road' + str(int(current_frame_name_purpose)) + '.png'
             print(name)
-            fps_calculator = (self.current_frame / 30) % self.every_x_sec
+            fps_calculator = (self.current_frame / 15) % self.every_x_sec
             if (fps_calculator - self.fps_calculator_previous < 0):
                 print("Klatka")
                 cv.imwrite(name, self.frame)
             self.fps_calculator_previous = fps_calculator
             self.current_frame += 1
-            current_frame_name_purpose = self.current_frame/30
+            current_frame_name_purpose = self.current_frame/15
 
 
     def capturedCanny(self):

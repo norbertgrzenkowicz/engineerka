@@ -46,6 +46,9 @@ class CornerAPI: # TODO: create "mainAPI" class to be parent of kCluster/thresho
 
         self.matplot(self.image, 'bottomtext')
 
-# road_angle = CornerAPI()
 
-# road_angle.draw_parabola_road(-20, 20)
+
+
+road_angle = CornerAPI()
+
+road_angle.draw_parabola_road(-20, 20)

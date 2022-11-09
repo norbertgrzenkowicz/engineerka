@@ -18,9 +18,8 @@ class curveDetection(Device):
             for x1,y1,x2,y2 in lines[x]:
                 cv2.line(self.inputImage,(x1,y1),(x2,y2),(0,128,0),2, cv2.LINE_AA)
                 pts = np.array([[x1, y1 ], [x2 , y2]], np.int32)
-                # cv2.polylines(inputImage, [pts], True, (0,255,0))
+                cv2.polylines(self.inputImage, [pts], True, (0,255,0))
     
-
 
 # captured_canny()
 
