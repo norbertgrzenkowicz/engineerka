@@ -21,7 +21,7 @@ class Interface(dataHandler):
         self.path = ''
         self.API = mainAPI()
         self.passing_args(sys.argv)
-        self.API.camOrPhoto()
+        self.media = self.API.camOrPhoto()
         self.log = logging.getLogger("BRUH")
 
     def passing_args(self, argv):
@@ -30,7 +30,7 @@ class Interface(dataHandler):
             
             try:
                 opts, args = getopt.getopt(argv[1:], "hi:u:o:", ["help", "input=", 
-                "user=", "output=", "path=", 'threshold', 'scikitThreshold', 'clahe', 'kCluster', 'contour', 'datahandler'])
+                "user=", "output=", "path=", 'threshold', 'scikitThreshold', 'clahe', 'kCluster', 'contour', 'datahandler', 'apex', 'prediction'])
             except:
                 print("Nieznane parametry. Sprobuj ponownie.")
                 print(arg_help)
@@ -44,6 +44,9 @@ class Interface(dataHandler):
                     self.path = arg
                     print(self.path)
                     self.API.setPath(self.path)
+
+                elif opt in ("-u", "--prediction"):
+                    print(self.predictCornerThisPicture())
 
                 elif opt in ("-t", "--threshold"):
                     print(self.thresholdThisPicture())
@@ -61,6 +64,9 @@ class Interface(dataHandler):
                     print("contour placeholder") 
                 elif opt in ("-d", "--datahandler"):
                     dataHandler.rename2(self.path)
+
+    def predictCornerThisPicture(self):
+        return self.API.predictPhoto()
 
     def thresholdThisPicture(self):
         return self.API.threshold()

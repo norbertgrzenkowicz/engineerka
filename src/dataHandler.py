@@ -36,4 +36,4 @@ def add_pose(dataPath):
         with open(dst, 'w') as fp:
             pass
 
-rename2('/home/norbert/Documents/repos/engineerka/data/apex')
+# rename2('/home/norbert/Documents/repos/engineerka/data/apex')

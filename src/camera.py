@@ -37,7 +37,7 @@ class Camera(Device):
                 print("Cant receive frame (stream end?). Exiting..")
                 break
 
-            self.captured_video_save_data('/home/norbert/Documents/repos/engineerka/data/apex_extended')
+            self.captured_video_save_data('/home/norbert/Documents/repos/engineerka/data/cam_calib')
 
             #display the resulting frame
             cv.imshow('frame', self.frame)   
@@ -60,7 +60,7 @@ class Camera(Device):
 
         current_frame_name_purpose = self.current_frame/15
         if self.ret:
-            name = '/home/norbert/Documents/repos/engineerka/data' + '/road' + str(int(current_frame_name_purpose)) + '.png'
+            name = dataPath + '/cam_calib' + str(int(current_frame_name_purpose)) + '.png'
             print(name)
             fps_calculator = (self.current_frame / 15) % self.every_x_sec
             if (fps_calculator - self.fps_calculator_previous < 0):

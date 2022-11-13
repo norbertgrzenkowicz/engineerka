@@ -2,6 +2,8 @@ import sys
 import getopt
 from matplotlib import pyplot as plt, image # from matplotlib import image
 
+import numpy as np
+
 from camera import Camera
 from photoCamera import photoCamera
 # from clahe import clahe
@@ -11,13 +13,14 @@ from scikitThreshold import scikitThreshold
 from thresholdToContour import thresholdToContour
 from curveDetect import curveDetection
 from imageCropper import imageCropper
-
-
+from cornerAPI import Corners
+from velocityPred import velocityPred
 
 class mainAPI:
     def __init__(self):
         self.dupa = True
         self.mediaPath = ''
+        self.calibrationList = np.genfromtxt(r'data/cam_calib/cam_calib.txt')
 
     def camOrPhoto(self):
         if self.mediaPath.endswith('.MP4'):
@@ -68,4 +71,8 @@ class mainAPI:
         pass # TODO: clahe to class
 
     def predictPhoto(self):
-        pass #TODO: class for predicting roads from loaded model
+        predicter = Corners(self.mediaPath)
+        predicter.predApex()
+        velPredicter = velocityPred(apexPoint=predicter.returnApex(), calibrationList = self.calibrationList)
+        return velPredicter.canWeSlowDown()
+
