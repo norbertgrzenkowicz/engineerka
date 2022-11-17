@@ -28,10 +28,12 @@ class Corners():
         self.xT = []
         self.yT = []
 
+        self.trajectoryCoeffs = []
+
         self.polyTrajectory = None
 
-        self.trj = None
-        self.trjLn = None
+        self.trajectory = None
+        self.trajectoryLane = None
 
     def definePoints(self):
         edges = cv2.Canny(self.img, 100, 255)
@@ -67,18 +69,18 @@ class Corners():
 
 
         if self.xRight[0] > self.xLeft[0]:
-            self.reducingLengths(self.xLeft, self.yLeft, self.xRight, self.yRight)
+            self.reducingLengths()
         elif self.xRight[0] < self.xLeft[0]:
-            self.reducingLengths(self.xRight, self.yRight, self.xLeft, self.yLeft)
+            self.reducingLengths()
  
 
-    def reducingLengths(self, smallX, smallY, bigX, bigY):
+    def reducingLengths(self):
         for i in range(len(self.xRight)):
             if self.xRight[i] in self.xLeft:
-                ostatni = i
+                last = i
                 break
-        self.xRight = self.xRight[ostatni:]
-        self.yRight = self.yRight[ostatni:]
+        self.xRight = self.xRight[last:]
+        self.yRight = self.yRight[last:]
 
 
     def fittedCurvePoints(self):
@@ -89,15 +91,15 @@ class Corners():
         cordX, _, Y = self.removeDuplicates(cordX)
         cordY, _, Y = self.removeDuplicates(cordY)
 
-        cordX = cordX[:-3]
-        _ = _[:-3]
+
+        cordX, cordY = self.cutLongerList(cordX, cordY)
+
+        assert len(cordX) == len(cordY)
 
         begin = abs(cordX[0][1] - cordY[0][1])
         end = abs(cordX[-20][1] - cordY[-20][1])
 
         wideness = []
-
-        print('wide', begin, end)
 
         beginplace = 0.7
         endplace2 = 0.7
@@ -124,7 +126,14 @@ class Corners():
 
         print('lol', len(cordX), len(cordY))
 
+    def cutLongerList(self, listX, listY):
 
+        toCut = abs(len(listX) - len(listY))
+        if len(listX) > len(listY):
+            listX = listX[:-toCut]
+        elif len(listX) > len(listY):
+            listY = listY[:-toCut]
+        return listX, listY
 
     def removeDuplicates(self, list):
         x = list[0][0]
@@ -141,42 +150,28 @@ class Corners():
 
     def fittingCurve(self):
 
-        trajectoryCoeffs = []
-
         leftLine = np.linspace(min(self.xLeft),max(self.xLeft),300).reshape(-1,1)
         rightLine = np.linspace(min(self.xRight),max(self.xRight),300).reshape(-1,1)
-        self.trjLn =  np.linspace(min(self.xT),max(self.xT),300).reshape(-1,1)
 
         fittedPolynomialLeft = np.polyfit(self.xLeft, self.yLeft, self.polyRank)
         fittedPolynomialRight = np.polyfit(self.xRight, self.yRight, self.polyRank)
-        fittedPolynomialTraj = np.polyfit(self.xT, self.yT, self.polyRank)
 
         for i in range(self.polyRank + 1):
-            # if fittedPolynomialLeft[i] > 0 and fittedPolynomialRight[0] < 0 or fittedPolynomialLeft[i] < 0 and fittedPolynomialRight[0] > 0:
-            #     trajectoryCoeffs.append(-(abs(fittedPolynomialLeft[i]) + abs(fittedPolynomialRight[i])) / 2)
-            # elif 
-            trajectoryCoeffs.append((fittedPolynomialLeft[i] + fittedPolynomialRight[i]) / 2)
+            self.trajectoryCoeffs.append((fittedPolynomialLeft[i] + fittedPolynomialRight[i]) / 2)
 
-# trajectoryCoeffs[0] = fittedPolynomialLeft[0]
-# trajectoryCoeffs[-1] = trajectoryCoeffs[-1] - 100
 
         print('coeffs to left polynomial:\n', fittedPolynomialLeft)
         print('coeffs to right polynomial:\n', fittedPolynomialRight)
-        print('coeffs to right polynomial:\n', trajectoryCoeffs)
+        print('coeffs to right polynomial:\n', self.trajectoryCoeffs)
 
         self.leftSide = np.poly1d(fittedPolynomialLeft)
         self.rightSide = np.poly1d(fittedPolynomialRight)
-        trajectory = np.poly1d(trajectoryCoeffs)
-        trj = np.poly1d(fittedPolynomialTraj)
- 
+
         # self.findApex()
         # plt.scatter(self.xLeft, self.yLeft)
         # plt.scatter(self.xRight, self.yRight)
         # plt.scatter(self.xT, self.yT)
         # # plt.scatter(self.apex[0], self.apex[1])
-
-        self.trj = np.polyval(trj, self.trjLn)
-        self.polyTrajectory = np.polyval(trajectory, self.trjLn)
 
         # plt.plot(leftLine, np.polyval(fittedPolynomialLeft, leftLine), color="black")
         # plt.plot(rightLine, np.polyval(fittedPolynomialRight, rightLine), color="black")
@@ -188,6 +183,15 @@ class Corners():
 # print(leftSide)
 # print(rightSide)
 # print(xRight[yRight.index(min(yRight))], min(yRight))
+
+    def fittingTrajectory(self):
+        self.trajectoryLane =  np.linspace(min(self.xT),max(self.xT),300).reshape(-1,1)
+        fittedPolynomialTraj = np.polyfit(self.xT, self.yT, self.polyRank)
+
+        middleSide = np.poly1d(self.trajectoryCoeffs)
+        trj = np.poly1d(fittedPolynomialTraj)
+        self.trajectory = np.polyval(trj, self.trajectoryLane)
+        self.polyTrajectory = np.polyval(middleSide, self.trajectoryLane)
 
 
     def find_minimum(self, poly):
@@ -238,6 +242,7 @@ class Corners():
         self.fittedCurvePoints()
         self.fittingCurve()
         self.findApex()
+        self.fittingTrajectory()
         print(self.apex)
 
 
@@ -248,10 +253,10 @@ class Corners():
         return self.xT, self.yT
 
     def returnTrajectory(self):
-        return self.trjLn, self.trj
+        return self.trajectoryLane, self.trajectory
 
     def returnPolyTrajectory(self):
-        return self.trjLn, self.polyTrajectory
+        return self.trajectoryLane, self.polyTrajectory
 
 
 
