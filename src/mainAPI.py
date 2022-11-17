@@ -56,16 +56,6 @@ class mainAPI:
     def kCluster(self):
         kClusterer = kCluster(self.mediaPath)
         return kClusterer.kClustering()
-    
-    
-    # def curveDetect(self.path):
-    #     curveDetector = curveDetection(self.path)
-    #     # TODO: implement plotting for curve decector
-    #     # # font = cv2.FONT_HERSHEY_SIMPLEX
-    #     # # cv2.putText(inputImage,"Tracks Detected", (500, 250), font, 0.5, 255)
-    #     # # cv2.imshow("Trolley_Problem_Result", inputImage)
-    #     # # cv2.imshow('edge', inputImage)
-    #     # cv2.waitKey(0)
 
     def cornering(self):
         pass # TODO: clahe to class
@@ -73,6 +63,22 @@ class mainAPI:
     def predictPhoto(self):
         predicter = Corners(self.mediaPath)
         predicter.predApex()
+
+        self.drawTrajectories(predicter)
+
         velPredicter = velocityPred(apexPoint=predicter.returnApex(), calibrationList = self.calibrationList)
+
         return velPredicter.canWeSlowDown()
 
+    def drawTrajectories(self, pred):
+        pred.drawTrajectory(pred.returnTrajectoryPoints, pred.img)
+        pred.drawTrajectory(pred.returnTrajectory, pred.img)
+        pred.drawTrajectory(pred.returnPolyTrajectory, pred.img)
+
+        import cv2
+        frame = pred.img
+        while True:
+            cv2.imshow('Zdjecie',frame)
+
+            if cv2.waitKey(1) == ord('q'):
+                break

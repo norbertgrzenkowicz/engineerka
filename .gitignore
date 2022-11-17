@@ -1,3 +1,5 @@
+.idea
+.vscode
 venv
 jupyter/aclImdb
 jupyter/ac1Imdb_v1.tar.gz
@@ -8,3 +10,8 @@ images/
 videos/
 data_not_done_yet/
 jupyter_cheatsheet.pdf
+models
+src/__pycache__
+src/models
+GX010032.MP4
+supermoto-evening.mp4

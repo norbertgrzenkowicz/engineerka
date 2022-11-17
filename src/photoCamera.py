@@ -16,17 +16,21 @@ class photoCamera(Device):
         self.connect_output(imagePath)
 
     def connect_output(self, imagePath):
-        self.frame = cv.imread(imagePath)
-     
-        import cornerAPI
-        dupa = cornerAPI.Corners(imagePath)
-        dupa.predApex()
 
-        dupa.drawTrajectory(dupa.returnTrajectoryPoints, self.frame)
+        if isinstance(imagePath, str):
+            self.frame = cv.imread(imagePath)
+        else:
+            self.frame = imagePath
 
-        dupa.drawTrajectory(dupa.returnTrajectory, self.frame)
+        # import cornerAPI
+        # dupa = cornerAPI.Corners(imagePath)
+        # dupa.predApex()
 
-        dupa.drawTrajectory(dupa.returnPolyTrajectory, self.frame)
+        # dupa.drawTrajectory(dupa.returnTrajectoryPoints, self.frame)
+
+        # dupa.drawTrajectory(dupa.returnTrajectory, self.frame)
+
+        # dupa.drawTrajectory(dupa.returnPolyTrajectory, self.frame)
 
 
         # x, y = dupa.returnTrajectoryPoints()
@@ -52,6 +56,8 @@ class photoCamera(Device):
             if cv.waitKey(1) == ord('q'):
                 break
 
-
         # if self.cap.isOpened():
         #     logging.warning("Otwarto polaczenie.")
+
+    def overwritePhoto(self, img):
+        self.frame = img

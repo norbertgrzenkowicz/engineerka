@@ -7,7 +7,7 @@ from random import randint
 class Corners():
     def __init__(self, mediaPath):
         self.mediaPath = mediaPath
-        self.img = cv2.imread(mediaPath, 0)
+        self.img = cv2.imread(mediaPath)
 
         self.polyRank = 6
         self.listOfCords = []
@@ -67,7 +67,6 @@ class Corners():
             self.xRight.append(point[0])
             self.yRight.append(point[1])
 
-
         if self.xRight[0] > self.xLeft[0]:
             self.reducingLengths()
         elif self.xRight[0] < self.xLeft[0]:
@@ -96,9 +95,6 @@ class Corners():
 
         assert len(cordX) == len(cordY)
 
-        begin = abs(cordX[0][1] - cordY[0][1])
-        end = abs(cordX[-20][1] - cordY[-20][1])
-
         wideness = []
 
         beginplace = 0.7
@@ -111,20 +107,27 @@ class Corners():
         
         wideness = np.array(wideness)
 
-        sideness = np.linspace(beginplace,endplace2,len(cordX) - 30)
-        sidenessCorner = np.linspace(beginplace2,endplace, 30)
+        assert self.apex != ()
+
+        import math
+
+        apexI = math.floor(self.apex[0])
+
+        for i, cord in enumerate(cordX):
+            if apexI == cord[0]:
+                cornerIndex = i
+        
+        cornerStart = len(cordX) - cornerIndex
+
+        sideness = np.linspace(beginplace,endplace2,len(cordX) - cornerStart)
+        sidenessCorner = np.linspace(beginplace2,endplace, cornerStart)
         sideness = np.append(sideness, sidenessCorner)
 
         traj = list(zip(_, sideness * wideness + Y))
-        # traj = traj[:150]
 
         for point in traj:
             self.xT.append(point[0])
             self.yT.append(point[1])
-
-        print(traj)
-
-        print('lol', len(cordX), len(cordY))
 
     def cutLongerList(self, listX, listY):
 
@@ -159,30 +162,12 @@ class Corners():
         for i in range(self.polyRank + 1):
             self.trajectoryCoeffs.append((fittedPolynomialLeft[i] + fittedPolynomialRight[i]) / 2)
 
-
         print('coeffs to left polynomial:\n', fittedPolynomialLeft)
         print('coeffs to right polynomial:\n', fittedPolynomialRight)
         print('coeffs to right polynomial:\n', self.trajectoryCoeffs)
 
         self.leftSide = np.poly1d(fittedPolynomialLeft)
         self.rightSide = np.poly1d(fittedPolynomialRight)
-
-        # self.findApex()
-        # plt.scatter(self.xLeft, self.yLeft)
-        # plt.scatter(self.xRight, self.yRight)
-        # plt.scatter(self.xT, self.yT)
-        # # plt.scatter(self.apex[0], self.apex[1])
-
-        # plt.plot(leftLine, np.polyval(fittedPolynomialLeft, leftLine), color="black")
-        # plt.plot(rightLine, np.polyval(fittedPolynomialRight, rightLine), color="black")
-        # plt.plot(leftLine, np.polyval(trajectory, rightLine), color="black")
-        # plt.plot(leftLine, np.polyval(fittedPolynomialTraj, trajLine), color="black")
-
-        # plt.show()
-
-# print(leftSide)
-# print(rightSide)
-# print(xRight[yRight.index(min(yRight))], min(yRight))
 
     def fittingTrajectory(self):
         self.trajectoryLane =  np.linspace(min(self.xT),max(self.xT),300).reshape(-1,1)
@@ -202,17 +187,6 @@ class Corners():
         roots = np.real(np.roots(poly.deriv()))
         return roots[np.argmax(poly(roots))]
 
-
-# print(find_minimum2(leftSide))
-# apex = find_maximum2(leftSide)
-# apex1 = find_maximum2(rightSide)
-
-# To verify if another function to recognize corner is needed
-# if mymodel[0] > 0 and mymodel2[0] > 0:
-#     print("zakret prawy")
-# elif mymodel[0] <= 0 or mymodel2[0] <= 0:
-#     print("zakret lewy")
-
     def findApex(self):
         if self.isRight:
             x = self.find_minimum(self.rightSide)
@@ -221,30 +195,36 @@ class Corners():
             x = self.find_maximum(self.leftSide)
             self.apex = (x, self.leftSide(x))
 
-        print('punkt apexu:\n', self.apex)
+        print('punkt szczytowy zakretu:\n', self.apex)
 
 
     def drawTrajectory(self, func, img):
-
         y, x = func()
-
         verts = np.array(list(zip(x, y)))
         cv2.polylines(img,np.int32([verts]),False,(randint(0, 255),randint(0, 255),randint(0, 255)),thickness=3)
 
     def printPlot(self):
-        # plt.scatter(*zip(*self.list_of_cords))
-        pass
+        plt.scatter(*zip(*self.list_of_cords))
+        self.findApex()
+        plt.scatter(self.xLeft, self.yLeft)
+        plt.scatter(self.xRight, self.yRight)
+        plt.scatter(self.xT, self.yT)
+        plt.scatter(self.apex[0], self.apex[1])
 
+        # plt.plot(leftLine, np.polyval(fittedPolynomialLeft, leftLine), color="black")
+        # plt.plot(rightLine, np.polyval(fittedPolynomialRight, rightLine), color="black")
+        # plt.plot(leftLine, np.polyval(trajectory, rightLine), color="black")
+        # plt.plot(leftLine, np.polyval(fittedPolynomialTraj, trajLine), color="black")
+        plt.show()
 
     def predApex(self):
         self.definePoints()
         self.whichSide()
-        self.fittedCurvePoints()
         self.fittingCurve()
         self.findApex()
+        self.fittedCurvePoints()
         self.fittingTrajectory()
         print(self.apex)
-
 
     def returnApex(self):
         return self.apex
@@ -257,28 +237,3 @@ class Corners():
 
     def returnPolyTrajectory(self):
         return self.trajectoryLane, self.polyTrajectory
-
-
-
-# pointCord = list_of_cords[0]
-
-# list_of_cords.pop(0)
-
-# print("PETELKA")
-# print(len(list_of_cords))
-
-# cords_in = []
-
-# cords_in.append(pointCord[0])
-
-# for i, cord in enumerate(list_of_cords):
-#     if cord[0] == cords_in[-1]:
-#         list_of_cords.pop(i)
-#     if cord[0] != cords_in[-1]:
-#         cords_in.append(cord[0])
-
-# for i, cord in enumerate(list_of_cords):
-#     if cord[0] == pointCord[0] and abs(cord[1] - pointCord[1]) > 0:
-#         list_of_cords.pop(i)
-#     if cord[0] != pointCord[0]:
-#         pointCord = list_of_cords[i]
