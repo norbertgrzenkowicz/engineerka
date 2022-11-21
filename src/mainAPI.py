@@ -1,9 +1,10 @@
 import sys
 import getopt
 from matplotlib import pyplot as plt, image # from matplotlib import image
-
 import numpy as np
+from cv2 import imread, imwrite
 
+from networkLoader import Network
 from camera import Camera
 from photoCamera import photoCamera
 # from clahe import clahe
@@ -29,6 +30,8 @@ class mainAPI:
             media = photoCamera(self.mediaPath)
         elif self.mediaPath == '':
             raise NameError('Nie podano sciezki zdjecia/wideo.')
+        elif self.mediaPath.endswith('labeled') or self.mediaPath.endswith('labeled'):
+            return None
         else :
             raise NameError('Nie obslugiwany format pliku. \nObslugiwane formaty to .mp4 i .png')
 
@@ -37,9 +40,13 @@ class mainAPI:
     def setPath(self, mediaPath):
         self.mediaPath = mediaPath
 
-    def cropDataset(self):
-        cropper = imageCropper(self.mediaPath)
+    def cropDataset(self, mediaPath):
+        cropper = imageCropper(mediaPath)
         cropper.CropData()
+
+    def resizeDataset(self, mediaPath):
+        resizer = imageCropper(mediaPath)
+        resizer.resizeData()
 
     def threshold(self):
         thresholder = Threshold(self.mediaPath)
@@ -57,28 +64,32 @@ class mainAPI:
         kClusterer = kCluster(self.mediaPath)
         return kClusterer.kClustering()
 
-    def cornering(self):
-        pass # TODO: clahe to class
+    def segmentPhoto(self, mediaPath):
+        nNetwork = Network(mediaPath)
+        return nNetwork.savePreds()
 
     def predictPhoto(self):
-        predicter = Corners(self.mediaPath)
-        predicter.predApex()
+        self.saveToBePredictedPhoto()
+        segmentedPhotoPath = self.segmentPhoto(self.mediaPath)
 
+        predicter = Corners(OGmediaPath=self.mediaPath, mediaPath = segmentedPhotoPath)
+        predicter.predApex()
         self.drawTrajectories(predicter)
 
         velPredicter = velocityPred(apexPoint=predicter.returnApex(), calibrationList = self.calibrationList)
-
         return velPredicter.canWeSlowDown()
 
     def drawTrajectories(self, pred):
+
         pred.drawTrajectory(pred.returnTrajectoryPoints, pred.img)
         pred.drawTrajectory(pred.returnTrajectory, pred.img)
         pred.drawTrajectory(pred.returnPolyTrajectory, pred.img)
+        pred.drawTrajectory(pred.returnleftSide, pred.img)
+        pred.drawTrajectory(pred.returnRightSide, pred.img)
 
-        import cv2
-        frame = pred.img
-        while True:
-            cv2.imshow('Zdjecie',frame)
+        self.mediaPath = '/home/norbert/Documents/repos/engineerka/src/predictedRoad.png'
+        imwrite(self.mediaPath, pred.img)
 
-            if cv2.waitKey(1) == ord('q'):
-                break
+    def saveToBePredictedPhoto(self):
+        img = imread(self.mediaPath)
+        imwrite('/home/norbert/Documents/repos/engineerka/src/toBePredictedRoad.png', img)

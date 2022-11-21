@@ -9,7 +9,7 @@ from pathlib import Path
 import logging # TODO: just one logger on whole project eh?
 
 class Camera(Device):
-    def __init__(self, videoPath='supermoto-evening.mp4'):
+    def __init__(self, videoPath=''):
         self.cap = None
         self.ret = None
         self.frame = None

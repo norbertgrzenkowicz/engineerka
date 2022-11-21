@@ -5,10 +5,10 @@ import pandas as pd
 from random import randint
 
 class Corners():
-    def __init__(self, mediaPath):
+    def __init__(self, OGmediaPath = '', mediaPath = ''):
         self.mediaPath = mediaPath
         self.img = cv2.imread(mediaPath)
-
+        self.OGimg = cv2.imread(OGmediaPath)
         self.polyRank = 6
         self.listOfCords = []
         self.isRight = True
@@ -35,6 +35,12 @@ class Corners():
         self.trajectory = None
         self.trajectoryLane = None
 
+        self.leftLine = None
+        self.RightLine = None
+
+        self.leftTrajectory = None
+        self.rightTrajectory = None
+
     def definePoints(self):
         edges = cv2.Canny(self.img, 100, 255)
         indices = np.where(edges != [0])
@@ -51,9 +57,9 @@ class Corners():
         _ , prev = self.list_of_cords[-1]
 
         for i in self.list_of_cords[::-1]:
-            if abs(prev - i[1]) > 40 and prev > i[1]:
+            if abs(prev - i[1]) > 10 and prev > i[1]:
                 self.isRight = False
-            elif abs(prev - i[1]) > 40 and prev < i[1]:
+            elif abs(prev - i[1]) > 10 and prev < i[1]:
                 self.isRight = True
 
             prev = i[1]
@@ -113,6 +119,8 @@ class Corners():
 
         apexI = math.floor(self.apex[0])
 
+        cornerIndex = 0
+
         for i, cord in enumerate(cordX):
             if apexI == cord[0]:
                 cornerIndex = i
@@ -153,8 +161,8 @@ class Corners():
 
     def fittingCurve(self):
 
-        leftLine = np.linspace(min(self.xLeft),max(self.xLeft),300).reshape(-1,1)
-        rightLine = np.linspace(min(self.xRight),max(self.xRight),300).reshape(-1,1)
+        self.leftLine = np.linspace(min(self.xLeft),max(self.xLeft),300).reshape(-1,1)
+        self.rightLine = np.linspace(min(self.xRight),max(self.xRight),300).reshape(-1,1)
 
         fittedPolynomialLeft = np.polyfit(self.xLeft, self.yLeft, self.polyRank)
         fittedPolynomialRight = np.polyfit(self.xRight, self.yRight, self.polyRank)
@@ -175,8 +183,12 @@ class Corners():
 
         middleSide = np.poly1d(self.trajectoryCoeffs)
         trj = np.poly1d(fittedPolynomialTraj)
+
         self.trajectory = np.polyval(trj, self.trajectoryLane)
         self.polyTrajectory = np.polyval(middleSide, self.trajectoryLane)
+
+        self.leftTrajectory =np.polyval(self.leftSide, self.trajectoryLane)
+        self.rightTrajectory =np.polyval(self.rightSide, self.trajectoryLane)
 
 
     def find_minimum(self, poly):
@@ -203,20 +215,6 @@ class Corners():
         verts = np.array(list(zip(x, y)))
         cv2.polylines(img,np.int32([verts]),False,(randint(0, 255),randint(0, 255),randint(0, 255)),thickness=3)
 
-    def printPlot(self):
-        plt.scatter(*zip(*self.list_of_cords))
-        self.findApex()
-        plt.scatter(self.xLeft, self.yLeft)
-        plt.scatter(self.xRight, self.yRight)
-        plt.scatter(self.xT, self.yT)
-        plt.scatter(self.apex[0], self.apex[1])
-
-        # plt.plot(leftLine, np.polyval(fittedPolynomialLeft, leftLine), color="black")
-        # plt.plot(rightLine, np.polyval(fittedPolynomialRight, rightLine), color="black")
-        # plt.plot(leftLine, np.polyval(trajectory, rightLine), color="black")
-        # plt.plot(leftLine, np.polyval(fittedPolynomialTraj, trajLine), color="black")
-        plt.show()
-
     def predApex(self):
         self.definePoints()
         self.whichSide()
@@ -237,3 +235,9 @@ class Corners():
 
     def returnPolyTrajectory(self):
         return self.trajectoryLane, self.polyTrajectory
+    
+    def returnleftSide(self):
+        return self.trajectoryLane, self.leftTrajectory
+
+    def returnRightSide(self):
+        return self.trajectoryLane, self.rightTrajectory

@@ -4,7 +4,6 @@ import logging
 
 from matplotlib import image
 from dataHandler import dataHandler
-from pathlib import Path
 from mainAPI import mainAPI
 
 import getopt
@@ -30,7 +29,7 @@ class Interface(dataHandler):
             
             try:
                 opts, args = getopt.getopt(argv[1:], "hi:u:o:", ["help", "input=", 
-                "user=", "output=", "path=", 'threshold', 'scikitThreshold', 'clahe', 'kCluster', 'contour', 'datahandler', 'apex', 'prediction'])
+                "user=", "output=", "path=", 'threshold', 'scikitThreshold', 'clahe', 'kCluster', 'contour', 'datahandler', 'apex', 'prediction', 'resize'])
             except:
                 print("Nieznane parametry. Sprobuj ponownie.")
                 print(arg_help)
@@ -61,12 +60,14 @@ class Interface(dataHandler):
                     print("kCluster placeholder")
                 elif opt in ("-tc", "--contour"):
                     print(self.thresholdToContourThisPicture())
-                    print("contour placeholder") 
                 elif opt in ("-d", "--datahandler"):
                     dataHandler.rename2(self.path)
+                elif opt in ("-r", "--resize"):
+                    self.resizeThisDataset(self.path)
 
     def predictCornerThisPicture(self):
-        return self.API.predictPhoto()
+        canWeSlowDown = self.API.predictPhoto()
+        return canWeSlowDown
 
     def thresholdThisPicture(self):
         return self.API.threshold()
@@ -80,7 +81,10 @@ class Interface(dataHandler):
     def kClusterThisPicture(self):
         return self.API.kCluster()
 
-    def cropThisDataset(self, inputPath, outputPath):
-        pass #TODO
+    def cropThisDataset(self, inputPath):
+        self.API.cropDataset(inputPath)
+
+    def resizeThisDataset(self, inputPath):
+        self.API.resizeDataset(inputPath)
 
 iface = Interface()

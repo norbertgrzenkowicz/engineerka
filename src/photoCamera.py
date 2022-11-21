@@ -22,33 +22,6 @@ class photoCamera(Device):
         else:
             self.frame = imagePath
 
-        # import cornerAPI
-        # dupa = cornerAPI.Corners(imagePath)
-        # dupa.predApex()
-
-        # dupa.drawTrajectory(dupa.returnTrajectoryPoints, self.frame)
-
-        # dupa.drawTrajectory(dupa.returnTrajectory, self.frame)
-
-        # dupa.drawTrajectory(dupa.returnPolyTrajectory, self.frame)
-
-
-        # x, y = dupa.returnTrajectoryPoints()
-
-        # verts = np.array(list(zip(y, x)))
-        # cv.polylines(self.frame,np.int32([verts]),False,(0,200,255),thickness=3)
-
-
-        # x, y = dupa.returnTrajectory()
-
-        # verts = np.array(list(zip(x, y)))
-        # cv.polylines(self.frame,np.int32([verts]),False,(80,180,180),thickness=3)
-
-        # x, y = dupa.returnPolyTrajectory()
-
-        # verts = np.array(list(zip(x, y)))
-        # cv.polylines(self.frame,np.int32([verts]),False,(0,180,180),thickness=3)
-
         logging.warning("Otwarto polaczenie.")
         while True:
             cv.imshow('Zdjecie',self.frame)
