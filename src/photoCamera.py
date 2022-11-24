@@ -9,14 +9,16 @@ from pathlib import Path
 import logging
 
 class photoCamera(Device):
-    def __init__(self, imagePath):
+    def __init__(self, imagePath, window=True):
         self.cap = None
         self.ret = None
         self.frame = None
-        self.connect_output(imagePath)
+        self.window = window
+        if self.window:
+            self.connectOutput(imagePath)
 
-    def connect_output(self, imagePath):
-
+    def connectOutput(self, imagePath):
+        "Wyswietlenie podanego pliku zdjeciowego"
         if isinstance(imagePath, str):
             self.frame = cv.imread(imagePath)
         else:
@@ -28,9 +30,6 @@ class photoCamera(Device):
 
             if cv.waitKey(1) == ord('q'):
                 break
-
-        # if self.cap.isOpened():
-        #     logging.warning("Otwarto polaczenie.")
 
     def overwritePhoto(self, img):
         self.frame = img

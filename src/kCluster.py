@@ -5,7 +5,7 @@ from Device import Device
 
 from skimage.filters import threshold_otsu
 
-class kCluster(Device): # TODO: KWARGS, ARGS TODO: Im not sure kCluster shoud be subclass of Device? Maybe thresholding
+class kCluster(Device):
     def __init__(self, imagePath):
         self.img = cv2.imread(imagePath)
         self.img_rgb=cv2.cvtColor(self.img,cv2.COLOR_BGR2RGB)
@@ -16,30 +16,29 @@ class kCluster(Device): # TODO: KWARGS, ARGS TODO: Im not sure kCluster shoud be
         self.imaging()
 
     def color_quantization(self, image, k):
-        """Performs color quantization using K-means clustering algorithm"""
+        """Kwantyzacja kolorow za pomoca algorytmu K-means clustering"""
 
-        # Transform image into 'data':
+        # Transformacja zdjecia w macierz 'data':
         data = np.float32(image).reshape((-1, 3))
-        # print(data.shape)
 
-        # Define the algorithm termination criteria (the maximum number of iterations and/or the desired accuracy):
-        # In this case the maximum number of iterations is set to 20 and epsilon = 1.0
+        # Zdefiniuj kryteria terminacji algorytmu(maksymalna liczba iteracju lub porzadana precyzja)
+        # W tym przypadku maksymalna liczba iteracje jest 20 oraz epsilon = 1.0
         criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 20, 1.0)
 
-        # Apply K-means clustering algorithm:
+        # Zastosuj K-means clustering algorytm
         ret, label, center = cv2.kmeans(data, k, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
 
-        # At this point we can make the image with k colors
-        # Convert center to uint8:
+        # Teraz mozna przejsc z danych do zdjecia
+        # Skonwertuj center do uint8
         center = np.uint8(center)
-        # Replace pixel values with their center value:
+        # Zamine wartosci pikseli z ich wycentrowanymi wartosciami
         result = center[label.flatten()]
         result = result.reshape(self.img.shape)
         return result
 
     def figgin(self):
         fig = plt.figure(figsize=(16, 8))
-        plt.suptitle("Color quantization using K-means clustering algorithm", fontsize=14, fontweight='bold')
+        plt.suptitle("Kwantyzacja kolorow uzywajac K-means clustering algorytm", fontsize=14, fontweight='bold')
         fig.patch.set_facecolor('silver')
 
     def imaging(self):
@@ -58,8 +57,6 @@ class kCluster(Device): # TODO: KWARGS, ARGS TODO: Im not sure kCluster shoud be
         self.filtered = self.filter_image(self.img, img_otsu)
 
     def plottin(self):
-        # Plot the images:
-        # Apply color quantization:
         color_3 = self.color_quantization(self.img, 3)
         color_5 = self.color_quantization(self.img, 5)
         # color_11 = self.color_quantization(self.img,  10)
@@ -67,21 +64,15 @@ class kCluster(Device): # TODO: KWARGS, ARGS TODO: Im not sure kCluster shoud be
         # color_20 = self.color_quantization(self.img, 20)
         # color_40 = self.color_quantization(self.img, 40)
 
-        self.show_img_with_matplotlib(self.img, "original image", 1)
-        self.show_img_with_matplotlib(color_3, "color quantization (k = 3)", 2)
-        self.show_img_with_matplotlib(color_5, "color quantization (k = 5)", 3)
-        # self.show_img_with_matplotlib(self.filtered, "color quantization (k = 5)", 2)
-        # self.show_img_with_matplotlib(color_20, "color quantization (k = 20)", 2)
-        # self.show_img_with_matplotlib(color_40, "color quantization (k = 40)", 3)
+        self.showImgWithMatplotlib(self.img, "Oryginalne zdjecie", 1, 'kcluster/org_kcluster')
+        self.showImgWithMatplotlib(color_3, "Kwantyzacja kolorow (k = 3)", 2, 'kcluster/k3cluster')
+        self.showImgWithMatplotlib(color_5, "Kwantyzacja kolorow (k = 5)", 3, 'kcluster/k5cluster')
+        # self.showImgWithMatplotlib(self.filtered, "Kwantyzacja kolorow (k = 5)", 2)
+        # self.showImgWithMatplotlib(color_20, "Kwantyzacja kolorow (k = 20)", 2)
+        # self.showImgWithMatplotlib(color_40, "Kwantyzacja kolorow (k = 40)", 3)
 
-        # Show the Figure:
         plt.show()
     
     def kClustering(self):
         self.iDunno()
         self.plottin()
-        return "path in future"
-
-
-
-

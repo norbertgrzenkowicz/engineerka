@@ -2,8 +2,8 @@
 	# Import packages
 
 import cv2
-import numpy as np
 import os
+import logging
 
 class imageCropper:
     def __init__(self, inputPath):
@@ -12,19 +12,19 @@ class imageCropper:
         self.pathList = os.listdir(inputPath)
 
     def CropData(self):
-        pass
-        # for image in self.pathList:
+        """Zmniejsz rozdzielczosc poprzez uciecie danego fragmentu cropped_image"""
+        for image in self.pathList:
 
-            # print('inputImage:', self.inputPath + '/' + image)
-            # img = cv2.imread(self.inputPath + '/' + image)
-            # cropped_image = img[500:800, :]
-            # # resized = cv2.resize(cropped_image, (1920, 1000), interpolation = cv2.INTER_AREA)
-            # cv2.imwrite(self.outputPath + '/' + image, cropped_image)
+            logging.info('inputImage:', self.inputPath + '/' + image)
+            img = cv2.imread(self.inputPath + '/' + image)
+            cropped_image = img[1000:, :]
+            cv2.imwrite(self.outputPath + '/' + image, cropped_image)
 
     def resizeData(self):
+        """Zmniejsz rozdzielczosc poprzez rozszerzenie"""
         for image in self.pathList:
             img = cv2.imread(self.inputPath + '/' + image)
-            print('Original Dimensions : ',img.shape)
+            logging.info('Original Dimensions : ',img.shape)
         
             scale_percent = 35 # percent of original size
             scale_percent2 = 35

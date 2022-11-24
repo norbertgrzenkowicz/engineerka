@@ -26,7 +26,7 @@ class Network:
 
 
   def setLearner(self, unlabeledPath = Path('/home/norbert/Documents/repos/engineerka/data/road/unlabeled'), opt = ranger):
-
+    """Proces ladowania objektu learner odpowiedzialnego za stworzenie sieci DNN"""
     binary = DataBlock(blocks=(ImageBlock, MaskBlock(self.codes)),
                       get_items=get_image_files,
                       splitter=RandomSplitter(),
@@ -41,6 +41,7 @@ class Network:
     self.dl = self.learner.dls.test_dl([self.mediaPath])
 
   def savePreds(self):
+    """Proces wykonywania predykcji na podanym zdjeciu oraz zapisywanie go do pliku zdjeciowego predictedPhoto.png"""
     preds = self.learner.get_preds(dl=self.dl)
 
     pred_1 = preds[0][0]
@@ -50,7 +51,7 @@ class Network:
     rescaled = (255.0 / pred_arx.max() * (pred_arx - pred_arx.min())).astype(np.uint8)
     im = Image.fromarray(rescaled)
 
-    predictedPhotoPath = '/home/norbert/Documents/repos/engineerka/src/predictedPhoto.png'
+    predictedPhotoPath = '/home/norbert/Documents/repos/engineerka/photos/preds/predictedPhoto.png'
 
     im.save(predictedPhotoPath)
 

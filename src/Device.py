@@ -1,14 +1,5 @@
-from abc import abstractmethod
-import sys  
 import cv2 as cv
-import os
-import numpy as np
 from matplotlib import pyplot as plt
-import logging # TODO: passing logging next please
-
-# print(cv.__version__)
-# print(sys.version)
-# print (sys.executable)
 
 class Device:
     def __init__(self):
@@ -16,7 +7,8 @@ class Device:
         self.subplot_col = 1
 
 
-    def video_player(self, func):
+    def videoPlayer(self, func):
+        """Wyswietla podany plik wideo po transformacji klatek z podanej funkcji func"""
         while True:
             # capture frame-by-frame
             self.ret, self.frame = self.cap.read()        
@@ -36,10 +28,9 @@ class Device:
         self.cap.release()
         cv.destroyAllWindows()
 
-    def show_img_with_matplotlib(self, color_img, title, pos):
-        """Shows an image using matplotlib capabilities"""
-
-        # Convert BGR image to RGB
+    def showImgWithMatplotlib(self, color_img, title, pos, img_name):
+        """Metoda wyswietlania zdjec poprzez wygodniejsza biblioteke matplotlib"""
+        cv.imwrite('/home/norbert/Documents/repos/engineerka/photos/' + img_name + '.png', color_img)
         img_RGB = color_img[:, :, ::-1]
 
         ax = plt.subplot(self.subplot_row, self.subplot_col, pos)

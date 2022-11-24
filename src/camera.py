@@ -6,7 +6,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from pathlib import Path
 
-import logging # TODO: just one logger on whole project eh?
+import logging
 
 class Camera(Device):
     def __init__(self, videoPath=''):
@@ -18,28 +18,29 @@ class Camera(Device):
         self.fps_calculator_previous = 0
         self.every_x_sec = 0.5
 
-        self.connect_output()
-        self.video_player()
+        self.connectOutput()
+        self.videoPlayer()
 
-    def connect_output(self, isLive=False):
+    def connectOutput(self, isLive=False):
+        """Wlaczenie kamery lub pliku wideo podanego w sciezce self.videoPath"""
         self.cap = cv.VideoCapture(0) if isLive else cv.VideoCapture(self.videoPath)
 
         if self.cap.isOpened():
-            logging.warning("Succesfully opened a connection.")
+            logging.info("Otwarto polaczenie.")
 
-    def video_player(self):
+    def videoPlayer(self):
+        """Metoda wyswietlajaca plik wideo i wykonywujaca self.capturedVideoSaveData"""
         while True:
-            # capture frame-by-frame
+            # Przypisanie kazdej klatki do zmiennej
             self.ret, self.frame = self.cap.read()        
             
             if not self.ret:
-            #if frame is read correctly ret is True
-                print("Cant receive frame (stream end?). Exiting..")
+                logging.error("Cant receive frame (stream end?). Exiting..")
                 break
 
-            self.captured_video_save_data('/home/norbert/Documents/repos/engineerka/data/cam_calib')
+            self.capturedVideoSaveData('/home/norbert/Documents/repos/engineerka/data/cam_calib')
 
-            #display the resulting frame
+            #Pokaz klatke wyjsciowa
             cv.imshow('frame', self.frame)   
             if cv.waitKey(1) == ord('q'):
                 break
@@ -47,9 +48,8 @@ class Camera(Device):
         self.cap.release()
         cv.destroyAllWindows()
 
-    def captured_video_save_data(self, dataPath):
-
-        # dataPath = '/data/unlabeled_test' # TODO: try if Path() is available here
+    def capturedVideoSaveData(self, dataPath):
+        """Metoda zapisujaca klatke pliku wideo do podanej sciezki"""
         try:
             if not os.path.exists(dataPath):
                 os.makedirs(dataPath)
@@ -61,38 +61,11 @@ class Camera(Device):
         current_frame_name_purpose = self.current_frame/15
         if self.ret:
             name = dataPath + '/cam_calib' + str(int(current_frame_name_purpose)) + '.png'
-            print(name)
+            logging.debug(name)
             fps_calculator = (self.current_frame / 15) % self.every_x_sec
             if (fps_calculator - self.fps_calculator_previous < 0):
-                print("Klatka")
+                logging.debug("Klatka")
                 cv.imwrite(name, self.frame)
             self.fps_calculator_previous = fps_calculator
             self.current_frame += 1
             current_frame_name_purpose = self.current_frame/15
-
-
-    def capturedCanny(self):
-        gray = cv.cvtColor(self.frame, cv.COLOR_BGR2GRAY)
-        blur = cv.GaussianBlur(gray, (3,3), 0)
-        edges = cv.Canny(image=blur, threshold1=50, threshold2=100)
-
-        return edges
-
-    def threshold_data(self, dataPath):
-        # dataPath = 'data/thresholded'
-        try:
-            if not os.path.exists(dataPath):
-                os.makedirs(dataPath)
-
-        except OSError:
-            logging.error('Creating directory of ', dataPath)
-        
-        unlabeledDataPath = 'data/unlabeled'
-        
-        for image in os.listdir(unlabeledDataPath):
-            image_path = unlabeledDataPath + image
-            img = cv.imread(image_path)
-            gray_image = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-            ret, thresh = cv.threshold(gray_image, 80, 255, cv.THRESH_TOZERO)
-            name = './' + dataPath + '/' + image
-            cv.imwrite(name, thresh)

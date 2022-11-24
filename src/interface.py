@@ -4,7 +4,7 @@ import logging
 
 from matplotlib import image
 from dataHandler import dataHandler
-from mainAPI import mainAPI
+from Invoker import Invoker
 
 import getopt
 
@@ -18,73 +18,69 @@ class Interface(dataHandler):
     def __init__(self):
         self.something = False
         self.path = ''
-        self.API = mainAPI()
-        self.passing_args(sys.argv)
-        self.media = self.API.camOrPhoto()
+        self.window = True
+        self.invAPI = Invoker()
+        self.passingArgs(sys.argv)
+        self.media = self.invAPI.camOrPhoto(self.window)
         self.log = logging.getLogger("BRUH")
 
-    def passing_args(self, argv):
+    def passingArgs(self, argv):
+        """Podawanie argumentow podanych w konsoli oraz wykonanie odpowiednich funkcji zwiazanych z podanymi parametrami"""
         if __name__ == "__main__":
             arg_help = "{0} -p <path of footage> \n-t <threshold> \n-s <scikit_threshold>".format(argv[0])
-            
+
+            parameters = ["help", "input=", 
+                "user=", "output=", "path=", 'threshold', 'scikitThreshold', 'kCluster', 'datahandler', 'apex', 'prediction', 'resize', 'noWindow']
+
             try:
-                opts, args = getopt.getopt(argv[1:], "hi:u:o:", ["help", "input=", 
-                "user=", "output=", "path=", 'threshold', 'scikitThreshold', 'clahe', 'kCluster', 'contour', 'datahandler', 'apex', 'prediction', 'resize'])
+                opts, args = getopt.getopt(argv[1:], "hi:u:o:", parameters)
             except:
-                print("Nieznane parametry. Sprobuj ponownie.")
-                print(arg_help)
+                logging.error("Nieznane parametry. Sprobuj ponownie.")
+                logging.info(arg_help)
                 sys.exit(2)
             
-            for opt, arg in opts:
-                if opt in ("-h", "--help"):
-                    print(arg_help)
+            for parameter, argument in opts:
+                if parameter in ("-h", "--help"):
+                    logging.info(arg_help)
                     sys.exit(2)
-                elif opt in ("-p", "--path"):
-                    self.path = arg
-                    print(self.path)
-                    self.API.setPath(self.path)
+                elif parameter in ("-p", "--path"):
+                    self.path = argument
+                    logging.debug(self.path)
+                    self.invAPI.setPath(self.path)
 
-                elif opt in ("-u", "--prediction"):
-                    print(self.predictCornerThisPicture())
-
-                elif opt in ("-t", "--threshold"):
-                    print(self.thresholdThisPicture())
-                    
-                elif opt in ("-s", "--scikitThreshold"):
-                    print(self.scikitThresholdThisPicture())
-
-                elif opt in ("-c", "--clahe"):
-                    print("clahe placeholder")
-                elif opt in ("-k", "--kCluster"):
-                    print(self.kClusterThisPicture())
-                    print("kCluster placeholder")
-                elif opt in ("-tc", "--contour"):
-                    print(self.thresholdToContourThisPicture())
-                elif opt in ("-d", "--datahandler"):
+                elif parameter in ("-p", "--prediction"):
+                    logging.info(self.predictCorner())
+                elif parameter in ("-t", "--threshold"):
+                    self.threshold()
+                elif parameter in ("-s", "--scikitThreshold"):
+                    self.scikitThreshold()
+                elif parameter in ("-k", "--kCluster"):
+                    self.kCluster()
+                elif parameter in ("-d", "--datahandler"):
                     dataHandler.rename2(self.path)
-                elif opt in ("-r", "--resize"):
+                elif parameter in ("-r", "--resize"):
                     self.resizeThisDataset(self.path)
+                elif parameter in ("--noWindow"):
+                    self.window = False
 
-    def predictCornerThisPicture(self):
-        canWeSlowDown = self.API.predictPhoto()
+    def predictCorner(self):
+        """Predykcja zdjec"""
+        canWeSlowDown = self.invAPI.predictPhoto()
         return canWeSlowDown
 
-    def thresholdThisPicture(self):
-        return self.API.threshold()
+    def threshold(self):
+        self.invAPI.threshold()
 
-    def scikitThresholdThisPicture(self):
-        return self.API.scikitThreshold()
+    def scikitThreshold(self):
+        self.invAPI.scikitThreshold()
 
-    def thresholdToContourThisPicture(self):
-        return self.API.thresholdToContour()
-
-    def kClusterThisPicture(self):
-        return self.API.kCluster()
+    def kCluster(self):
+        self.invAPI.kCluster()
 
     def cropThisDataset(self, inputPath):
-        self.API.cropDataset(inputPath)
+        self.invAPI.cropDataset(inputPath)
 
     def resizeThisDataset(self, inputPath):
-        self.API.resizeDataset(inputPath)
+        self.invAPI.resizeDataset(inputPath)
 
 iface = Interface()
