@@ -15,7 +15,7 @@ class imageCropper:
         """Zmniejsz rozdzielczosc poprzez uciecie danego fragmentu cropped_image"""
         for image in self.pathList:
 
-            logging.info('inputImage:', self.inputPath + '/' + image)
+            print('inputImage:', self.inputPath + '/' + image)
             img = cv2.imread(self.inputPath + '/' + image)
             cropped_image = img[1000:, :]
             cv2.imwrite(self.outputPath + '/' + image, cropped_image)
@@ -24,7 +24,7 @@ class imageCropper:
         """Zmniejsz rozdzielczosc poprzez rozszerzenie"""
         for image in self.pathList:
             img = cv2.imread(self.inputPath + '/' + image)
-            logging.info('Original Dimensions : ',img.shape)
+            print('Original Dimensions : ',img.shape)
         
             scale_percent = 35 # percent of original size
             scale_percent2 = 35

@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from random import randint
+from math import floor
 import logging
 
 class Corners():
@@ -118,9 +118,7 @@ class Corners():
 
         assert self.apex != ()
 
-        import math
-
-        apexI = math.floor(self.apex[0])
+        apexI = floor(self.apex[0])
 
         cornerIndex = 0
 
@@ -174,9 +172,9 @@ class Corners():
         for i in range(self.polyRank + 1):
             self.trajectoryCoeffs.append((fittedPolynomialLeft[i] + fittedPolynomialRight[i]) / 2)
 
-        logging.info('coeffs to left polynomial:\n', fittedPolynomialLeft)
-        logging.info('coeffs to right polynomial:\n', fittedPolynomialRight)
-        logging.info('coeffs to right polynomial:\n', self.trajectoryCoeffs)
+        print('coeffs to left polynomial:\n', fittedPolynomialLeft, '\n')
+        print('coeffs to right polynomial:\n', fittedPolynomialRight, '\n')
+        print('coeffs to right polynomial:\n', self.trajectoryCoeffs, '\n')
 
         self.leftSide = np.poly1d(fittedPolynomialLeft)
         self.rightSide = np.poly1d(fittedPolynomialRight)
@@ -210,19 +208,23 @@ class Corners():
         """Znajdz szczyt zakretu (Apex)"""
         if self.isRight:
             x = self.find_minimum(self.rightSide)
-            self.apex = (x, self.rightSide(x))
+            self.apex = (int(x), int(self.rightSide(x)))
         else:
             x = self.find_maximum(self.leftSide)
-            self.apex = (x, self.leftSide(x))
+            self.apex = (int(x), int(self.leftSide(x)))
 
-        logging.info('punkt szczytowy zakretu:\n', self.apex)
+        print('punkt szczytowy zakretu:\n', self.apex)
 
 
-    def drawTrajectory(self, func, img):
+    def drawTrajectory(self, func, img, colors):
         """Metoda rysuje za pomoca cv2.polylines wielomian danej trajektorii"""
         y, x = func()
         verts = np.array(list(zip(x, y)))
-        cv2.polylines(img,np.int32([verts]),False,(randint(0, 255),randint(0, 255),randint(0, 255)),thickness=3)
+        cv2.polylines(img,np.int32([verts]),False,(colors),thickness=3)
+
+    def drawApex(self):
+        self.img[int(self.apex[0]), int(self.apex[1])] = (0, 0, 255)
+        self.img[int(self.apex[0]), int(self.apex[1])] = (0, 0, 255)
 
     def predApex(self):
         """Proces predykcji szczytu zakretu"""
@@ -232,7 +234,8 @@ class Corners():
         self.findApex()
         self.fittedCurvePoints()
         self.fittingTrajectory()
-        logging.debug('apex: ', self.apex)
+        logging.debug('apex:')
+        logging.debug(str(self.apex))
 
     def returnApex(self):
         """Zwroc koordynaty szczytu zakretu"""

@@ -81,14 +81,15 @@ class Invoker:
 
     def drawTrajectories(self, pred):
         """Rysowanie trajektorii"""
-        pred.drawTrajectory(pred.returnTrajectoryPoints, pred.img)
-        pred.drawTrajectory(pred.returnTrajectory, pred.img)
-        pred.drawTrajectory(pred.returnPolyTrajectory, pred.img)
-        pred.drawTrajectory(pred.returnleftSide, pred.img)
-        pred.drawTrajectory(pred.returnRightSide, pred.img)
+        # pred.drawTrajectory(pred.returnTrajectoryPoints, pred.img, (0, 0, 255))
+        pred.drawTrajectory(pred.returnTrajectory, pred.img, (255, 120, 120))
+        pred.drawTrajectory(pred.returnPolyTrajectory, pred.img, (120, 120, 255))
+        pred.drawTrajectory(pred.returnleftSide, pred.img, (120, 120, 120))
+        pred.drawTrajectory(pred.returnRightSide, pred.img, (120, 120, 120))
+        pred.drawApex()
 
         self.mediaPath = '/home/norbert/Documents/repos/engineerka/photos/preds/predictedRoad.png'
-        imwrite(self.mediaPath, pred.img)
+        imwrite(self.mediaPath, pred.img)            
 
     def saveToBePredictedPhoto(self):
         """Zapisanie zdjecia wraz z wszystkimi predykcjami"""

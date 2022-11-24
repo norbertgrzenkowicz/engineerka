@@ -24,7 +24,7 @@ class photoCamera(Device):
         else:
             self.frame = imagePath
 
-        logging.warning("Otwarto polaczenie.")
+        print("Otwarto polaczenie.")
         while True:
             cv.imshow('Zdjecie',self.frame)
 

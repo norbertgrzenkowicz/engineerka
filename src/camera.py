@@ -26,7 +26,7 @@ class Camera(Device):
         self.cap = cv.VideoCapture(0) if isLive else cv.VideoCapture(self.videoPath)
 
         if self.cap.isOpened():
-            logging.info("Otwarto polaczenie.")
+            print("Otwarto polaczenie.")
 
     def videoPlayer(self):
         """Metoda wyswietlajaca plik wideo i wykonywujaca self.capturedVideoSaveData"""
@@ -35,7 +35,7 @@ class Camera(Device):
             self.ret, self.frame = self.cap.read()        
             
             if not self.ret:
-                logging.error("Cant receive frame (stream end?). Exiting..")
+                print("Cant receive frame (stream end?). Exiting..")
                 break
 
             self.capturedVideoSaveData('/home/norbert/Documents/repos/engineerka/data/cam_calib')
@@ -54,7 +54,7 @@ class Camera(Device):
             if not os.path.exists(dataPath):
                 os.makedirs(dataPath)
         except OSError:
-            logging.error('Tworzenie sciezki', dataPath)
+            print('Tworzenie sciezki', dataPath)
 
         frame_per_second = self.cap.get(cv.CAP_PROP_FPS)
 
