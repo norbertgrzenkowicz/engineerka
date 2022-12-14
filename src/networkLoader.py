@@ -1,6 +1,8 @@
 from fastai.vision.all import *
 from fastai.optimizer import ranger
+from os import getcwd
 
+currentDir = getcwd()
 class Network:
   def __init__(self, mediaPath):
 
@@ -25,19 +27,19 @@ class Network:
     return (inp.argmax(dim=1)[mask]==targ[mask]).float().mean()
 
 
-  def setLearner(self, unlabeledPath = Path('/home/norbert/Documents/repos/engineerka/data/road/unlabeled'), opt = ranger):
+  def setLearner(self, unlabeledPath = Path(currentDir + '/data/road/unlabeled'), opt = ranger):
     """Proces ladowania objektu learner odpowiedzialnego za stworzenie sieci DNN"""
     binary = DataBlock(blocks=(ImageBlock, MaskBlock(self.codes)),
                       get_items=get_image_files,
                       splitter=RandomSplitter(),
                       #  get_y=get_y,
-                      item_tfms=Resize((200, 480)),
+                      item_tfms=Resize((250, 480)),
                       batch_tfms=[Normalize.from_stats(*imagenet_stats)])
 
     dls = binary.dataloaders(unlabeledPath, bs=4)
     self.learner = unet_learner(dls, resnet34, metrics=self.cam_acc, self_attention=True, act_cls=Mish, opt_func=opt)
 
-    self.learner.load('/home/norbert/Documents/repos/engineerka/src/models/stage-1');
+    self.learner.load(currentDir + '/src/models/stage-1');
     self.dl = self.learner.dls.test_dl([self.mediaPath])
 
   def savePreds(self):
@@ -51,7 +53,7 @@ class Network:
     rescaled = (255.0 / pred_arx.max() * (pred_arx - pred_arx.min())).astype(np.uint8)
     im = Image.fromarray(rescaled)
 
-    predictedPhotoPath = '/home/norbert/Documents/repos/engineerka/photos/preds/predictedPhoto.png'
+    predictedPhotoPath = currentDir + '/photos/preds/predictedPhoto.png'
 
     im.save(predictedPhotoPath)
 

@@ -12,7 +12,7 @@ class kCluster(Device):
         self.img_gray=cv2.cvtColor(self.img_rgb,cv2.COLOR_RGB2GRAY)
         self.filtered = None
         self.setSubPlot(2, 2)
-        self.figgin()
+        self.figging()
         self.imaging()
 
     def color_quantization(self, image, k):
@@ -36,7 +36,7 @@ class kCluster(Device):
         result = result.reshape(self.img.shape)
         return result
 
-    def figgin(self):
+    def figging(self):
         fig = plt.figure(figsize=(16, 8))
         plt.suptitle("Kwantyzacja kolorow uzywajac K-means clustering algorytm", fontsize=14, fontweight='bold')
         fig.patch.set_facecolor('silver')
@@ -45,34 +45,29 @@ class kCluster(Device):
         img_rgb=cv2.cvtColor(self.img,cv2.COLOR_BGR2RGB)
         img_gray=cv2.cvtColor(img_rgb,cv2.COLOR_RGB2GRAY)
 
-    def filter_image(self, image, mask):
+    def filterImage(self, image, mask):
         r = image[:,:,0] * mask
         g = image[:,:,1] * mask
         b = image[:,:,2] * mask
         return np.dstack([r,g,b])
 
-    def iDunno(self):
+    def filtering(self):
         thresh = threshold_otsu(self.img_gray)
         img_otsu  = self.img_gray < thresh
-        self.filtered = self.filter_image(self.img, img_otsu)
+        self.filtered = self.filterImage(self.img, img_otsu)
 
-    def plottin(self):
+    def plotting(self):
         color_3 = self.color_quantization(self.img, 3)
         color_5 = self.color_quantization(self.img, 5)
-        # color_11 = self.color_quantization(self.img,  10)
-        # color_10 = self.color_quantization(self.img, 4)
-        # color_20 = self.color_quantization(self.img, 20)
-        # color_40 = self.color_quantization(self.img, 40)
+        color_10 = self.color_quantization(self.img,  10)
 
         self.showImgWithMatplotlib(self.img, "Oryginalne zdjecie", 1, 'kcluster/org_kcluster')
         self.showImgWithMatplotlib(color_3, "Kwantyzacja kolorow (k = 3)", 2, 'kcluster/k3cluster')
         self.showImgWithMatplotlib(color_5, "Kwantyzacja kolorow (k = 5)", 3, 'kcluster/k5cluster')
-        # self.showImgWithMatplotlib(self.filtered, "Kwantyzacja kolorow (k = 5)", 2)
-        # self.showImgWithMatplotlib(color_20, "Kwantyzacja kolorow (k = 20)", 2)
-        # self.showImgWithMatplotlib(color_40, "Kwantyzacja kolorow (k = 40)", 3)
+        self.showImgWithMatplotlib(color_10, "Kwantyzacja kolorow (k = 10)", 4, 'kcluster/k10cluster')
 
         plt.show()
     
     def kClustering(self):
-        self.iDunno()
-        self.plottin()
+        self.filtering()
+        self.plotting()

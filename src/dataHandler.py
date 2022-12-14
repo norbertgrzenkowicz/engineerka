@@ -13,7 +13,7 @@ def rename(dataPath, prefix='empty'):
         dst = f"{dataPath}/{name}"
         os.rename(src, dst)
 
-def rename2(dataPath):
+def renameDict(dataPath):
     """Szuka i zamienia odpowiedni ciag znakow zapisany w slowniku types"""
     for count, image_name in enumerate(os.listdir(dataPath)):
         types = {'.png_pose': '_pose'}

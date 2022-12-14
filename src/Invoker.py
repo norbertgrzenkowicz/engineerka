@@ -1,10 +1,9 @@
-import sys
-import getopt
+import os
 from matplotlib import pyplot as plt, image # from matplotlib import image
 import numpy as np
 from cv2 import imread, imwrite
 
-from networkLoader import Network
+from networkLoader import Network 
 from camera import Camera
 from photoCamera import photoCamera
 from kCluster import kCluster
@@ -13,6 +12,8 @@ from scikitThreshold import scikitThreshold
 from imageCropper import imageCropper
 from cornerAPI import Corners
 from velocityPred import velocityPred
+
+currentDir = os.getcwd()
 
 class Invoker:
     def __init__(self):
@@ -29,7 +30,7 @@ class Invoker:
         elif self.mediaPath.endswith('labeled') or self.mediaPath.endswith('labeled'):
             return None
         else:
-            raise NameError('Nie obslugiwany format pliku. \nObslugiwane formaty to .mp4 i .png')
+            raise NameError('Niepoprawna sciezka lub nie obslugiwany format pliku. Obslugiwane formaty to .MP4 i .png')
 
         return media
 
@@ -41,11 +42,6 @@ class Invoker:
         """Uciecie rozdzielczosci podanego zbioru danych"""
         cropper = imageCropper(mediaPath)
         cropper.CropData()
-
-    def resizeDataset(self, mediaPath):
-        """Zmiana rozdzielczosci poprzez rozszerzenie podanego zbiory danych"""
-        resizer = imageCropper(mediaPath)
-        resizer.resizeData()
 
     def threshold(self):
         """Wykonanie operacji threshold"""
@@ -67,7 +63,7 @@ class Invoker:
         nNetwork = Network(mediaPath)
         return nNetwork.savePreds()
 
-    def predictPhoto(self):
+    def predictPhoto(self, vel):
         """Predykcja trajektorii ruchu i predkosci na wysegmentowanym pliku zdjeciowym"""
         self.saveToBePredictedPhoto()
         segmentedPhotoPath = self.segmentPhoto(self.mediaPath)
@@ -76,22 +72,22 @@ class Invoker:
         predicter.predApex()
         self.drawTrajectories(predicter)
 
-        velPredicter = velocityPred(apexPoint=predicter.returnApex(), calibrationList = self.calibrationList)
+        velPredicter = velocityPred(currentVel = vel, apexPoint=predicter.returnApex(), calibrationList = self.calibrationList / 4)
         return velPredicter.canWeSlowDown()
 
     def drawTrajectories(self, pred):
         """Rysowanie trajektorii"""
         # pred.drawTrajectory(pred.returnTrajectoryPoints, pred.img, (0, 0, 255))
-        pred.drawTrajectory(pred.returnTrajectory, pred.img, (255, 120, 120))
+        pred.drawTrajectory(pred.returnTrajectory, pred.OGimg, (255, 120, 120))
         pred.drawTrajectory(pred.returnPolyTrajectory, pred.img, (120, 120, 255))
-        pred.drawTrajectory(pred.returnleftSide, pred.img, (120, 120, 120))
-        pred.drawTrajectory(pred.returnRightSide, pred.img, (120, 120, 120))
-        pred.drawApex()
+        pred.drawTrajectory(pred.returnleftSide, pred.OGimg, (120, 120, 120))
+        pred.drawTrajectory(pred.returnRightSide, pred.OGimg, (120, 120, 120))
+        pred.drawApex(pred.OGimg)
 
-        self.mediaPath = '/home/norbert/Documents/repos/engineerka/photos/preds/predictedRoad.png'
-        imwrite(self.mediaPath, pred.img)            
+        self.mediaPath = currentDir + '/photos/preds/predictedRoad.png'
+        imwrite(self.mediaPath, pred.OGimg)
 
     def saveToBePredictedPhoto(self):
         """Zapisanie zdjecia wraz z wszystkimi predykcjami"""
         img = imread(self.mediaPath)
-        imwrite('/home/norbert/Documents/repos/engineerka/photos/preds/toBePredictedRoad.png', img)
+        imwrite(currentDir + '/photos/preds/toBePredictedRoad.png', img)

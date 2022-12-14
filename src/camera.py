@@ -8,6 +8,7 @@ from pathlib import Path
 
 import logging
 
+currentDir = os.getcwd()
 class Camera(Device):
     def __init__(self, videoPath=''):
         self.cap = None
@@ -38,7 +39,7 @@ class Camera(Device):
                 print("Cant receive frame (stream end?). Exiting..")
                 break
 
-            self.capturedVideoSaveData('/home/norbert/Documents/repos/engineerka/data/cam_calib')
+            self.capturedVideoSaveData(currentDir + '/data/cam_calib')
 
             #Pokaz klatke wyjsciowa
             cv.imshow('frame', self.frame)   

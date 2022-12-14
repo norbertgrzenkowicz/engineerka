@@ -18,6 +18,7 @@ class Interface(dataHandler):
     def __init__(self):
         self.something = False
         self.path = ''
+        self.vel = 120
         self.window = True
         warnings.filterwarnings("ignore")
         logging.basicConfig(filename='debug.log', level=logging.DEBUG)
@@ -28,10 +29,10 @@ class Interface(dataHandler):
     def passingArgs(self, argv):
         """Podawanie argumentow podanych w konsoli oraz wykonanie odpowiednich funkcji zwiazanych z podanymi parametrami"""
         if __name__ == "__main__":
-            arg_help = "{0} -p <path of footage> \n-t <threshold> \n-s <scikit_threshold>".format(argv[0])
+            arg_help = "Przykladowe uzycie komendy:\n\n   {0} -path=<sciezka zdjecia> --threshold \n\n  Komendy:\n\n      help                   - wydrukowanie tresci pomocy \n\n      path=<sciezka medium>  - podanie sciezki do zdjecia\n\n      threshold              - wykonanie progowania globalnego \n\n      scikitThreshold        - wykonanie progowania globalnego i lokalnego\n\n      kCluster               - wykonanie algorytmu kmeans cluster \n\n      datahandler            - zamiana nazwy plikow z podanej sciezki w path \n\n      prediction             - wykonanie predykcji trajektorii ruchu i predkosci \n\n      resize                 - zmiana rozdzielczosci plikow w podanej sciezce bazy danych w path \n\n      noWindow               - blokuje wypisanie zdjecia na ekran za pomoca OpenCV\n".format(argv[0])
 
             parameters = ["help", "input=", 
-                "user=", "output=", "path=", 'threshold', 'scikitThreshold', 'kCluster', 'datahandler', 'apex', 'prediction', 'resize', 'noWindow']
+                "user=", "output=", "path=", 'threshold', 'scikitThreshold', 'kCluster', 'datahandler', 'prediction=', 'resize', 'noWindow']
 
             try:
                 opts, args = getopt.getopt(argv[1:], "hi:u:o:", parameters)
@@ -48,32 +49,44 @@ class Interface(dataHandler):
                     self.path = argument
                     logging.debug(self.path)
                     self.invAPI.setPath(self.path)
+                elif parameter in ("--prediction"):
+                    self.vel = int(argument)
+                    print(f'Czy motocyklista przygotuje sie do zakretu jadac z predkoscia {self.vel}?\n')
+                    if self.predictCorner():
+                        print('Tak, motocyklista przygotuje sie odpowiednio do zakretu.\n')
+                    else: 
+                        print('Motocyklista nie przygotuje sie odpowiednio do zakretu.\n')
 
-                elif parameter in ("-p", "--prediction"):
-                    print('Czy motocyklista przygotuje sie do zakretu?')
-                    print('Tak')if self.predictCorner() else print('Motocyklista nie przygotuje sie odpowiednio do zakretu')
-                elif parameter in ("-t", "--threshold"):
-                    print('Wykreslanie zdjec po transformacji threshold')
-                    self.threshold()
-                elif parameter in ("-s", "--scikitThreshold"):
-                    print('Wykreslanie zdjec po transformacji scikitThreshold')
-                    self.scikitThreshold()
-                elif parameter in ("-k", "--kCluster"):
-                    print('Wykreslanie zdjec po transformacji k-means cluster')
-                    self.kCluster()
-                elif parameter in ("-d", "--datahandler"):
-                    print('Zmienianie nazwy plikow w: ', self.path)
-                    dataHandler.rename2(self.path)
-                elif parameter in ("-r", "--resize"):
-                    print('Zmienianie rozdzielczosci plikow w: ', self.path)
-                    self.resizeThisDataset(self.path)
-                elif parameter in ("--noWindow"):
-                    print('Podano parametr noWindow, plik zdjeciowy nie zostanie wypisany przez openCV', self.path)
+                if parameter in ("--noWindow"):
+                    print('Podano parametr noWindow, plik zdjeciowy nie zostanie wypisany przez openCV\n', self.path)
                     self.window = False
+                # elif parameter in ("--prediction"):
+                #     print('Czy motocyklista przygotuje sie do zakretu?')
+                #     self.vel = int(argument)
+                #     if self.predictCorner():
+                #         print('Tak, motocykla przygotuje sie odpowiednio do zakretu.')
+                #     else: 
+                #         print('Motocyklista nie przygotuje sie odpowiednio do zakretu')
+
+                elif parameter in ("--threshold"):
+                    print('Wykreslanie zdjec po transformacji threshold')
+                    self.invAPI.threshold()
+                elif parameter in ("--scikitThreshold"):
+                    print('Wykreslanie zdjec po transformacji scikitThreshold')
+                    self.invAPI.scikitThreshold()
+                elif parameter in ("--kCluster"):
+                    print('Wykreslanie zdjec po transformacji k-means cluster')
+                    self.invAPI.kCluster()
+                elif parameter in ("--datahandler"):
+                    print('Zmienianie nazwy plikow w: ', self.path)
+                    dataHandler.renameDict(self.path)
+                elif parameter in ("--crop"):
+                    print('Zmienianie rozdzielczosci plikow w: ', self.path)
+                    self.invAPI.cropThisDataset(self.path)
 
     def predictCorner(self):
         """Predykcja zdjec"""
-        canWeSlowDown = self.invAPI.predictPhoto()
+        canWeSlowDown = self.invAPI.predictPhoto(self.vel)
         return canWeSlowDown
 
     def threshold(self):
@@ -88,8 +101,6 @@ class Interface(dataHandler):
     def cropThisDataset(self, inputPath):
         self.invAPI.cropDataset(inputPath)
 
-    def resizeThisDataset(self, inputPath):
-        self.invAPI.resizeDataset(inputPath)
 
 print("Start Aplikacji.")
 iface = Interface()

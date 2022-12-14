@@ -7,7 +7,7 @@ class Corners():
     def __init__(self, OGmediaPath = '', mediaPath = ''):
         self.mediaPath = mediaPath
         self.img = cv2.imread(mediaPath)
-        self.OGimg = cv2.imread(OGmediaPath)
+        self.OGimg = cv2.resize(cv2.imread(OGmediaPath), (480, 250), interpolation = cv2.INTER_AREA)
         self.polyRank = 6
         self.listOfCords = []
         self.isRight = True
@@ -59,13 +59,15 @@ class Corners():
         _ , prev = self.list_of_cords[-1]
 
         for i in self.list_of_cords[::-1]:
-            if abs(prev - i[1]) > 10 and prev > i[1]:
+            if abs(prev - i[1]) > 5 and prev > i[1]:
                 self.isRight = False
-            elif abs(prev - i[1]) > 10 and prev < i[1]:
+            elif abs(prev - i[1]) > 5 and prev < i[1]:
                 self.isRight = True
 
             prev = i[1]
             self.rightPointsList.append(i) if self.isRight else self.leftPointsList.append(i)
+
+        self.isRight = False
 
         for point in self.leftPointsList:
             self.xLeft.append(point[0])
@@ -106,10 +108,18 @@ class Corners():
 
         wideness = []
 
-        beginplace = 0.7
-        endplace2 = 0.7
-        beginplace2 = 0.7
-        endplace = 0.1
+        if self.isRight:
+            print('\tZakret jest prawostronny.\n')
+            beginplace = 0.6
+            endplace2 = 0.6
+            beginplace2 = 0.6
+            endplace = 0.9
+        else:
+            print('\tZakret jest lewostronny.\n')
+            beginplace = 0.7
+            endplace2 = 0.7
+            beginplace2 = 0.7
+            endplace = 0.1
 
         for i in range(len(cordX)):
             wideness.append(cordX[i][1] - cordY[i][1])
@@ -172,9 +182,9 @@ class Corners():
         for i in range(self.polyRank + 1):
             self.trajectoryCoeffs.append((fittedPolynomialLeft[i] + fittedPolynomialRight[i]) / 2)
 
-        print('coeffs to left polynomial:\n', fittedPolynomialLeft, '\n')
-        print('coeffs to right polynomial:\n', fittedPolynomialRight, '\n')
-        print('coeffs to right polynomial:\n', self.trajectoryCoeffs, '\n')
+        print('\tParametry lewego wielomianu:\n', fittedPolynomialLeft, '\n')
+        print('\tParametry prawego wielomianu:\n', fittedPolynomialRight, '\n')
+        print('\tParametry wielomianu trajektorii\n', self.trajectoryCoeffs, '\n')
 
         self.leftSide = np.poly1d(fittedPolynomialLeft)
         self.rightSide = np.poly1d(fittedPolynomialRight)
@@ -213,7 +223,7 @@ class Corners():
             x = self.find_maximum(self.leftSide)
             self.apex = (int(x), int(self.leftSide(x)))
 
-        print('punkt szczytowy zakretu:\n', self.apex)
+        print('\tpunkt szczytowy zakretu:', self.apex)
 
 
     def drawTrajectory(self, func, img, colors):
@@ -222,9 +232,9 @@ class Corners():
         verts = np.array(list(zip(x, y)))
         cv2.polylines(img,np.int32([verts]),False,(colors),thickness=3)
 
-    def drawApex(self):
-        self.img[int(self.apex[0]), int(self.apex[1])] = (0, 0, 255)
-        self.img[int(self.apex[0]), int(self.apex[1])] = (0, 0, 255)
+    def drawApex(self, img):
+        apex = self.apex[::-1]
+        cv2.circle(img, apex, 2, (0, 0, 255),cv2.FILLED, 2)
 
     def predApex(self):
         """Proces predykcji szczytu zakretu"""

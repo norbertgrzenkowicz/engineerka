@@ -1,5 +1,8 @@
 import cv2 as cv
 from matplotlib import pyplot as plt
+from os import getcwd
+
+currentDir = getcwd()
 
 class Device:
     def __init__(self):
@@ -30,7 +33,7 @@ class Device:
 
     def showImgWithMatplotlib(self, color_img, title, pos, img_name):
         """Metoda wyswietlania zdjec poprzez wygodniejsza biblioteke matplotlib"""
-        cv.imwrite('/home/norbert/Documents/repos/engineerka/photos/' + img_name + '.png', color_img)
+        cv.imwrite(currentDir + '/photos/' + img_name + '.png', color_img)
         img_RGB = color_img[:, :, ::-1]
 
         ax = plt.subplot(self.subplot_row, self.subplot_col, pos)

@@ -20,7 +20,7 @@ class scikitThreshold(Threshold):
         # kalkulacja histogramu
         self.hist = cv2.calcHist([self.gray_image], [0], None, [256], [0, 256])
 
-    def someAlgos(self):
+    def useScikitThresholds(self):
                 
         # Otsu's scikit-image algorytm:
         thresh_otsu = threshold_otsu(self.gray_image)
@@ -54,4 +54,4 @@ class scikitThreshold(Threshold):
 
     def scikitThresholding(self):
         self.calcHist()
-        self.someAlgos()
+        self.useScikitThresholds()
