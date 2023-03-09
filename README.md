@@ -4,6 +4,7 @@ Graduation project
 An accessory for bikers to judge their current speed based on experience based on. Project will be limited to camera, Raspberry Pi, LED light and software development.
 
 Example result of trajectory prediction, where blue line is trajectory, red dot is an apex point and gray lines road edges from segmented image.
+
 <img width="263" alt="image" src="https://user-images.githubusercontent.com/79313551/224175763-6bb5d822-cb8f-4267-bcd6-800801b1c29c.png">
 
 A comparison between original and segmented image:
